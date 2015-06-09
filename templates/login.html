@@ -1,10 +1,16 @@
-<!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}Couch Login{% endblock %}
+{% block body %}
+<form action="{{ url_for("login") }}" method="post">
+    <div class="six columns">
+        <label for="email_input">Email</label>
+        <input class="u-full-width" type="email" placeholder="you@couch.com" id="email_input">
+    </div>
+    <div class="six columns">
+        <label for="password_input">Password</label>
+        <input class="u-full-width" type="password" placeholder="********" id="password_input">
+    </div>
+    <input class="button-primary" type="submit" value="Submit">
+</form>
+{% endblock %}
 
-</body>
-</html>
