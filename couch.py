@@ -4,6 +4,7 @@ from flask_login import current_user, login_user, logout_user
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager, UserMixin
 from rauth.service import OAuth2Service
+import requests
 import json
 
 # Flask config
@@ -57,7 +58,6 @@ def logout():
 
 @app.route('/oauth/authorize')
 def oauth_authorize():
-    print('authorize')
     if not current_user.is_anonymous():
         return redirect(url_for('index'))
     params = {'response_type' : 'code',
@@ -67,24 +67,28 @@ def oauth_authorize():
 
 @app.route('/oauth/callback', methods=['GET', 'POST'])
 def oauth_callback():
-    print('callback')
     # check to make sure the user authorized the request
     if not 'code' in request.args:
         flash('You did not authorize the request')
         return redirect(url_for('index'))
 
-    print(request.args)
-
     data = {'code': request.args['code'],
             'grant_type': 'authorization_code',
-            'redirect_uri': url_for('oauth_callback', _external=True)}
+            'redirect_uri': url_for('oauth_callback', _external=True),
+            'client_id' : rdio_auth_service.client_id,
+            'client_secret' : rdio_auth_service.client_secret}
 
-    session = rdio_auth_service.get_auth_session(data=data, decoder=json.loads)
+    r = requests.post(rdio_auth_service.access_token_url, data=data)
 
-    # the 'me' response
-    me = session.get('me')
+    print(r.json())
 
-    print(me)
+    #session = rdio_auth_service.get_auth_session(data=data, decoder=json.loads)
+
+    # the response
+    #r = session.post('token_type', data={'client_id' : rdio_auth_service.client_id,
+    #                      'client_secret' : rdio_auth_service.client_secret})
+
+    #print(r.content)
 
     # user = User.query.filter_by(social_id=social_id).first()
     # if not user:
