@@ -5,7 +5,6 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager, UserMixin
 from rauth.service import OAuth2Service
 import requests
-import json
 
 # Flask config
 SECRET_KEY = 'development'
@@ -35,9 +34,10 @@ login_manager = LoginManager(app)
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    social_id = db.Column(db.String(64), nullable=False, unique=True)
-    nickname = db.Column(db.String(64), nullable=False)
-    email = db.Column(db.String(64), nullable=True)
+    first_name = db.Column(db.String(64), nullable=False)
+    last_name = db.Column(db.String(64), nullable=False)
+    image_url = db.Column(db.String(64), nullable=True)
+    user_url = db.Column(db.String(64), nullable=False)
 
 
 @login_manager.user_loader
@@ -72,30 +72,36 @@ def oauth_callback():
         flash('You did not authorize the request')
         return redirect(url_for('index'))
 
+    # get the Oauth access token
     data = {'code': request.args['code'],
             'grant_type': 'authorization_code',
             'redirect_uri': url_for('oauth_callback', _external=True),
             'client_id' : rdio_auth_service.client_id,
             'client_secret' : rdio_auth_service.client_secret}
+    access_token_response = requests.post(rdio_auth_service.access_token_url, data=data).json()
+    print(access_token_response)
+    access_token = access_token_response[u'access_token']
+    print(access_token)
 
-    r = requests.post(rdio_auth_service.access_token_url, data=data)
+    # set up the authenticated session with rdio
+    session = rdio_auth_service.get_session(access_token)
 
-    print(r.json())
+    # get the user response
+    user_response = session.post(rdio_auth_service.base_url, data={'access_token' : access_token, 'method' : 'currentUser'}).json()
+    print(user_response)
+    id = user_response[u'result'][u'key']
+    first_name = user_response[u'result'][u'firstName']
+    last_name = user_response[u'result'][u'lastName']
+    image_url = user_response[u'result'][u'dynamicIcon']
+    user_url = user_response[u'result'][u'url']
 
-    #session = rdio_auth_service.get_auth_session(data=data, decoder=json.loads)
-
-    # the response
-    #r = session.post('token_type', data={'client_id' : rdio_auth_service.client_id,
-    #                      'client_secret' : rdio_auth_service.client_secret})
-
-    #print(r.content)
-
-    # user = User.query.filter_by(social_id=social_id).first()
-    # if not user:
-    #     user = User(social_id=social_id, nickname=username, email=email)
-    #     db.session.add(user)
-    #     db.session.commit()
-    # login_user(user, True)
+    # add the user to the database
+    user = User.query.filter_by(id=id).first()
+    if not user:
+        user = User(id=id, first_name=first_name, last_name=last_name, image_url=image_url, user_url=user_url)
+        db.session.add(user)
+        db.session.commit()
+    login_user(user, True)
     return redirect(url_for('index'))
 
 

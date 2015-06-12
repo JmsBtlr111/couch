@@ -5,7 +5,10 @@
         <p><b>Error</b>: {{ message }}</p>
     {% endfor %}
     {% if current_user.is_authenticated() %}
-        <h2>Hi, {{ current_user.nickname }}!</h2>
+        <h2>Hi, {{ current_user.first_name }}!</h2>
+        <h2>Last Name = {{ current_user.last_name }}!</h2>
+        <h2>Rdio page = <a href='www.rdio.com' + {{ current_user.user_url }}</h2>
+         <img src="{{ current_user.image_url }}">
         <p><a href="{{ url_for('logout') }}">Logout</a></p>
     {% else %}
         <h2>I don't know you!</h2>
