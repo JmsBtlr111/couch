@@ -7,7 +7,7 @@
     {% if current_user.is_authenticated() %}
         <h2>Hi, {{ current_user.first_name }}!</h2>
         <h2>Last Name = {{ current_user.last_name }}!</h2>
-        <h2>Rdio page = <a href='www.rdio.com' + {{ current_user.user_url }}</h2>
+        <h2><a href={{'http://www.rdio.com' + current_user.user_url }}>Rdio page</a></h2>
          <img src="{{ current_user.image_url }}">
         <p><a href="{{ url_for('logout') }}">Logout</a></p>
     {% else %}
