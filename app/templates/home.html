@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block body %}
+<body>
+    <div id="header_container">
+       <header id="header">
+           <nav>
+               <ul>
+                   <li class="active"><a href="#">Home</a></li>
+                   <li><a href="#">About</a></li>
+                   <li class="middle"><img src="http://i.imgur.com/TVR5TQg.png" id="logo" /></li>
+                   <li><a href="#">Contact</a></li>
+                   <li><a href="#">Logout</a></li>
+               </ul>
+           </nav>
+        </header>
+    </div>
+    <div class="container">
+        <table class="u-full-width">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Age</th>
+              <th>Sex</th>
+              <th>Location</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Dave Gamache</td>
+              <td>26</td>
+              <td>Male</td>
+              <td>San Francisco</td>
+            </tr>
+            <tr>
+              <td>Dwayne Johnson</td>
+              <td>42</td>
+              <td>Male</td>
+              <td>Hayward</td>
+            </tr>
+          </tbody>
+        </table>
+    </div>
+</body>
+{% endblock %}
