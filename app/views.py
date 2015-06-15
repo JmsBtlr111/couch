@@ -2,9 +2,10 @@
 """Contains all the logic and routing to handle the displaying of views for the Couch app"""
 from flask import render_template, redirect, url_for, request, flash
 from flask_login import login_user, logout_user
-from app import app, db, lm, rdio_auth_service
-from models import User
 import requests
+
+from app import app, db, lm, rdio_auth_service
+from app.models import User
 
 
 @lm.user_loader
@@ -68,16 +69,16 @@ def oauth_callback():
     # get the user response as json
     user_response = session.post(rdio_auth_service.base_url,
                                  data={'access_token': access_token, 'method': 'currentUser'}).json()
-    key = str(user_response[u'result'][u'key'])
+    id = str(user_response[u'result'][u'key'])
     first_name = str(user_response[u'result'][u'firstName'])
     last_name = str(user_response[u'result'][u'lastName'])
     image_url = str(user_response[u'result'][u'dynamicIcon'])
     user_url = str(user_response[u'result'][u'url'])
 
     # add the user to the database
-    user = User.query.filter_by(key=key).first()
+    user = User.query.filter_by(id=id).first()
     if not user:
-        user = User(key=key, first_name=first_name, last_name=last_name, image_url=image_url, user_url=user_url)
+        user = User(id=id, first_name=first_name, last_name=last_name, image_url=image_url, user_url=user_url)
         db.session.add(user)
         db.session.commit()
 

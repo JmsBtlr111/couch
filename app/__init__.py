@@ -5,7 +5,6 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from rauth import OAuth2Service
 
-
 app = Flask(__name__)
 app.config.from_object('config')
 

@@ -1,12 +1,26 @@
 # coding=utf-8
-"""Contains all model definitions required by the Couch app"""
+"""Contains all the model definitions required by the Couch app"""
 from app import db
+
+
+association_table = db.Table('users', db.metadata,
+                             db.Column('group_id', db.Integer, db.ForeignKey('group.id')),
+                             db.Column('user_id', db.String(64), db.ForeignKey('user.id')))
+
+
+class Group(db.Model):
+    """The Couch app group model"""
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), nullable=False)
+    users = db.relationship('User', secondary=association_table, backref=db.backref('groups'))
+
+    def __repr__(self):
+        return '<Group (%s)>' % (self.name)
 
 
 class User(db.Model):
     """The Couch app user model"""
-    __tablename__ = 'users'
-    key = db.Column(db.String(64), primary_key=True)
+    id = db.Column(db.String(64), primary_key=True)
     first_name = db.Column(db.String(64), nullable=False)
     last_name = db.Column(db.String(64), nullable=False)
     image_url = db.Column(db.String(128), nullable=True)
@@ -23,9 +37,9 @@ class User(db.Model):
 
     def get_id(self):
         try:
-            return unicode(self.key)  # python 2
+            return unicode(self.id)  # python 2
         except NameError:
-            return str(self.key)  # python 3
+            return str(self.id)  # python 3
 
     def __repr__(self):
-        return '<User {0!r:s} {1!r:s}>'.format(self.first_name, self.last_name)
+        return '<User (%s %s)>' % (self.first_name, self.last_name)
