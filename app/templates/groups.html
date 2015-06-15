@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block body %}
+    <div> class='container'>
+        <div id='groups' class='row'>
+            {% for group in current_user.groups %}
+                <p>{{ group.name }}</p>
+        </div>
+            <button class='button-primary'></button>
+        </div>
+    </div>
+
+
+{% endblock %}
