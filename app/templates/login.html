@@ -1,17 +1,23 @@
 {% extends "base.html" %}
 {% block body %}
-    <h1>OAuth Demo</h1>
-    {% for message in get_flashed_messages() %}
-        <p><b>Error</b>: {{ message }}</p>
-    {% endfor %}
-    {% if current_user.is_authenticated() %}
-        <h2>Hi, {{ current_user.first_name }}!</h2>
-        <h2>Last Name = {{ current_user.last_name }}!</h2>
-        <h2><a href={{'http://www.rdio.com' + current_user.user_url }}>Rdio page</a></h2>
-         <img src="{{ current_user.image_url }}">
-        <p><a href="{{ url_for('logout') }}">Logout</a></p>
-    {% else %}
-        <h2>I don't know you!</h2>
-        <p><a href ="{{ url_for('oauth_authorize') }}">Login with Rdio</a></p>
-    {% endif %}
+<body>
+    <div id="header_container">
+       <header id="header">
+           <nav>
+               <ul>
+                   <li class="active"><a href="#">Home</a></li>
+                   <li><a href="#">About</a></li>
+                   <li class="middle"><img src="http://i.imgur.com/TVR5TQg.png" id="logo" /></li>
+                   <li><a href="#">Contact</a></li>
+                   <li><a href="#">Logout</a></li>
+               </ul>
+           </nav>
+        </header>
+    </div>
+
+    <div class="container">
+        <img src="http://i.imgur.com/yQGIkaR.png" id="rdio_logo" />
+        <a id="login_button" class="button" href="{{ url_for('oauth_authorize') }}">Login with Rdio</a>
+    </div>
+</body>
 {% endblock %}
