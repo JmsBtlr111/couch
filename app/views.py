@@ -33,6 +33,10 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
+@app.route('/home')
+def home():
+    """Navigate user to home page"""
+    return render_template('home.html')
 
 @app.route('/oauth/authorize')
 def oauth_authorize():
@@ -84,4 +88,4 @@ def oauth_callback():
 
     # log the user in
     login_user(user, True)
-    return redirect(url_for('login'))
+    return redirect(url_for('home'))
