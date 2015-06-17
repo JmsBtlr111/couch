@@ -20,4 +20,5 @@ rdio_auth_service = OAuth2Service(name='rdio',
                                   access_token_url='https://services.rdio.com/oauth2/token',
                                   base_url='https://services.rdio.com/api/1/')
 
-from app import views, models
+from app import views
+from app.models import user, group

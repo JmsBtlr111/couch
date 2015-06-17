@@ -5,7 +5,7 @@ from flask_login import login_user, logout_user
 import requests
 
 from app import app, db, lm, rdio_auth_service
-from app.models import User
+from app.models.user import User
 
 
 @lm.user_loader
@@ -30,6 +30,7 @@ def login():
 @app.route('/logout')
 def logout():
     """Logs the user out"""
+    requests.get('http://www.rdio.com/signout')
     logout_user()
     return redirect(url_for('login'))
 
