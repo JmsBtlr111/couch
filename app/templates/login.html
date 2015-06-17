@@ -1,4 +1,9 @@
 {% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='login.css') }}">
+{% endblock %}
+
 {% block body %}
 <body>
     <div id="header_container">

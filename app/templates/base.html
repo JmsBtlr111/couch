@@ -7,7 +7,9 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='normalize.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='skeleton.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='custom.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base.css') }}">
+    {% block head %}
+    {% endblock %}
 </head>
 {% block body %}
 {% endblock %}

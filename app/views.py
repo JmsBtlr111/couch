@@ -5,7 +5,7 @@ from flask_login import login_user, logout_user
 import requests
 
 from app import app, db, lm, rdio_auth_service
-from app.models import User
+from app.models import User, Group
 
 
 @lm.user_loader
@@ -82,8 +82,12 @@ def oauth_callback():
     # add the user to the database
     user = User.query.filter_by(id=id).first()
     if not user:
+        group = Group(name="Groupy")
         user = User(id=id, first_name=first_name, last_name=last_name, image_url=image_url, user_url=user_url)
+        group.users.append(user)
+        user.groups.append(group)
         db.session.add(user)
+        db.session.add(group)
         db.session.commit()
 
     # log the user in
