@@ -4,8 +4,9 @@ from flask import render_template, redirect, url_for, request, flash
 from flask_login import login_user, logout_user
 import requests
 
-from app import app, db, lm, rdio_auth_service
+from app import app, db, lm
 from app.models.user import User
+from app.rdio_session import RdioSession
 
 
 @lm.user_loader
@@ -38,9 +39,7 @@ def logout():
 @app.route('/oauth/authorize')
 def oauth_authorize():
     """Initial step of the Oauth2 authorization process"""
-    params = {'response_type': 'code',
-              'redirect_uri': url_for('oauth_callback', _external=True)}
-    return redirect(rdio_auth_service.get_authorize_url(**params))
+    return redirect(RdioSession().get_authorize_url('oauth_callback'))
 
 
 @app.route('/oauth/callback', methods=['GET', 'POST'])
@@ -55,31 +54,19 @@ def oauth_callback():
         flash('You did not authorize the request')
         return redirect(url_for('login'))
 
+    rdio_session = RdioSession()
+
     # get the Oauth access token
-    data = {'code': request.args['code'],
-            'grant_type': 'authorization_code',
-            'redirect_uri': url_for('oauth_callback', _external=True),
-            'client_id': rdio_auth_service.client_id,
-            'client_secret': rdio_auth_service.client_secret}
-    access_token_response = requests.post(rdio_auth_service.access_token_url, data=data).json()
-    access_token = access_token_response[u'access_token']
+    access_token = rdio_session.get_access_token('oauth_callback', request.args['code'])
 
     # set up the authenticated session with rdio
-    session = rdio_auth_service.get_session(access_token)
+    rdio_session.authenticate_session(access_token)
 
-    # get the user response as json
-    user_response = session.post(rdio_auth_service.base_url,
-                                 data={'access_token': access_token, 'method': 'currentUser'}).json()
-    id = str(user_response[u'result'][u'key'])
-    first_name = str(user_response[u'result'][u'firstName'])
-    last_name = str(user_response[u'result'][u'lastName'])
-    image_url = str(user_response[u'result'][u'dynamicIcon'])
-    user_url = str(user_response[u'result'][u'url'])
+    # get the current user
+    user = rdio_session.get_current_user(access_token)
 
-    # add the user to the database
-    user = User.query.filter_by(id=id).first()
-    if not user:
-        user = User(id=id, first_name=first_name, last_name=last_name, image_url=image_url, user_url=user_url)
+    # if the user is not already in the DB, add them
+    if not User.query.filter_by(id=user.id).first():
         db.session.add(user)
         db.session.commit()
 
