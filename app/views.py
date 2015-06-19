@@ -3,12 +3,12 @@
 from flask import render_template, redirect, url_for, request, flash
 from flask_login import login_user, logout_user
 import requests
-from app import app, db, lm
-from app.models.user import User
+from app import app, lm
+from app.models import model_dao
 from app.rdio_session import RdioSession
 
 
-@lm.user_loader
+@lm.user_loader  # TODO: Figure out a more appropriate place for this
 def load_user(user_id):
     """Load User specified by user_id.
 
@@ -16,8 +16,7 @@ def load_user(user_id):
 
     Used by the flask_login LoginManager.
     """
-    return User.query.get(unicode(user_id))
-
+    return model_dao.get_user(unicode(user_id))
 
 @app.route('/')
 @app.route('/index')
@@ -48,9 +47,7 @@ def oauth_authorize():
 @app.route('/oauth/callback', methods=['GET', 'POST'])
 def oauth_callback():
     """Final step of the Oauth2 authorization process.
-
-    If user authorizes us to use their Rdio account, add them to the User DB and log them in.
-    """
+    If user authorizes us to use their Rdio account, add them to the User DB and log them in."""
 
     # check the authorization code is present to make sure the user authorized the request
     if 'code' not in request.args:
@@ -69,10 +66,8 @@ def oauth_callback():
     user = rdio_session.get_current_user(access_token)
 
     # if the user is not already in the DB, add them
-    if not User.query.filter_by(id=user.id).first():
-        db.session.add(user)
-        db.session.add(group)
-        db.session.commit()
+    if not model_dao.get_user(id=user.id):
+        model_dao.add_user()
 
     # log the user in
     login_user(user, True)

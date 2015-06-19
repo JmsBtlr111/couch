@@ -4,7 +4,7 @@ from flask import url_for
 from rauth import OAuth2Service
 from couch import app
 from requests import post
-from app.models.user import User
+from app.models.user import User #TODO: This should be using the model_dao.
 
 
 class RdioSession:
