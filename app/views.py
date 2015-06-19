@@ -3,20 +3,8 @@
 from flask import render_template, redirect, url_for, request, flash
 from flask_login import logout_user, login_required
 
-from app import app, lm
-from app.models.user import User
+from app import app
 from app.rdio_session import RdioSession
-
-
-@lm.user_loader
-def load_user(user_id):
-    """Load User specified by user_id.
-
-    :param user_id: String
-
-    Used by the flask_login LoginManager.
-    """
-    return User.query.get(unicode(user_id))
 
 
 @app.route('/')
