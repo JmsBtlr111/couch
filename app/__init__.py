@@ -13,4 +13,4 @@ lm = LoginManager(app)
 lm.login_view = 'login'
 
 from app import views, login_manager
-from app.models import user, group
+from app.models import model_dao

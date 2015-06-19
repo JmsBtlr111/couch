@@ -5,8 +5,8 @@ from flask_login import login_user
 from rauth import OAuth2Service
 from couch import app
 from requests import post
+from app.models.user import User #TODO: This should be using the model_dao.
 from app import db
-from app.models.user import User
 
 
 class RdioSession:

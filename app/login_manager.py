@@ -1,6 +1,4 @@
-from app import lm
-from app.models.user import User
-
+from app import lm, model_dao
 
 @lm.user_loader
 def load_user(user_id):
@@ -10,4 +8,4 @@ def load_user(user_id):
 
     Used by the flask_login LoginManager.
     """
-    return User.query.get(unicode(user_id))
+    return model_dao.get_user(unicode(user_id))

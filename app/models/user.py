@@ -8,7 +8,7 @@ class User(db.Model):
     id = db.Column(db.String(64), primary_key=True)
     first_name = db.Column(db.String(64), nullable=False)
     last_name = db.Column(db.String(64), nullable=False)
-    image_url = db.Column(db.String(128), nullable=True)
+    image_url = db.Column(db.String(128), nullable=False)
     user_url = db.Column(db.String(64), nullable=False)
 
     def is_authenticated(self):

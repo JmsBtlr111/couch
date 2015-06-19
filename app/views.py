@@ -1,6 +1,7 @@
 # coding=utf-8
 """Contains all the logic and routing to handle the displaying of views for the Couch app"""
 from flask import render_template, redirect, url_for, request, flash
+from app.models import model_dao
 from flask_login import logout_user, login_required
 
 from app import app
@@ -22,6 +23,10 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
+@app.route('/home')
+def home():
+    """Navigate user to home page"""
+    return render_template('home.html')
 
 @app.route('/home')
 @login_required
@@ -39,9 +44,7 @@ def oauth_authorize():
 @app.route('/oauth/callback', methods=['GET', 'POST'])
 def oauth_callback():
     """Final step of the Oauth2 authorization process.
-
-    If user authorizes us to use their Rdio account, add them to the User DB and log them in.
-    """
+    If user authorizes us to use their Rdio account, add them to the User DB and log them in."""
 
     # check the authorization code is present to make sure the user authorized the request
     if 'code' not in request.args:
@@ -50,5 +53,7 @@ def oauth_callback():
 
     # log the user in to Rdio and Couch
     rdio_session = RdioSession()
+    # get the Oauth access token
+    access_token = rdio_session.get_access_token('oauth_callback', request.args['code'])
     redirect_url = rdio_session.login_user(request.args['code'])
     return redirect(redirect_url)
