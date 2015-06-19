@@ -1,10 +1,12 @@
 # coding=utf-8
 
-from flask import url_for
+from flask import url_for, flash
+from flask_login import login_user
 from rauth import OAuth2Service
 from couch import app
 from requests import post
 from app.models.user import User #TODO: This should be using the model_dao.
+from app import db
 
 
 class RdioSession:
@@ -24,22 +26,52 @@ class RdioSession:
                                           access_token_url=access_token_url,
                                           base_url=base_url)
 
+
+    def login_user(self, auth_code):
+        # get the Oauth access token
+        access_token_response = self._get_access_token_response('oauth_callback', auth_code)
+
+        # check for errors
+        if access_token_response.status_code != 200:
+            flash(str(access_token_response.json()[u'error_description']))
+            return url_for('login')
+
+        # now that we have an authenticated access token, we can authenticate our session
+        access_token = access_token_response.json()[u'access_token']
+        self._authenticate_session(access_token)
+
+        # get the current user
+        user = self.get_current_user(access_token)
+
+        # if the user is not already in the DB, add them
+        if not User.query.filter_by(id=user.id).first():
+            db.session.add(user)
+            db.session.commit()
+
+        # log the user in
+        login_user(user, True)
+        return url_for('home')
+
+
     def get_authorize_url(self, redirect_uri):
         params = {'response_type': 'code', 'redirect_uri': url_for(redirect_uri, _external=True)}
         return self.auth_service.get_authorize_url(**params)
 
-    def get_access_token(self, redirect_uri, auth_code):
+
+    def _get_access_token_response(self, redirect_uri, auth_code):
         data = {'code': auth_code,
                 'grant_type': 'authorization_code',
                 'redirect_uri': url_for(redirect_uri, _external=True),
                 'client_id': self.auth_service.client_id,
                 'client_secret': self.auth_service.client_secret}
 
-        access_token_response = post(self.auth_service.access_token_url, data=data).json()
-        return access_token_response[u'access_token']
+        access_token_response = post(self.auth_service.access_token_url, data=data)
+        return access_token_response
 
-    def authenticate_session(self, access_token):
+
+    def _authenticate_session(self, access_token):
         self.session = self.auth_service.get_session(access_token)
+
 
     def get_current_user(self, access_token):
         response = self.session.post(self.auth_service.base_url,

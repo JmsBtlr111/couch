@@ -1,10 +1,9 @@
 # coding=utf-8
 """Contains all the logic and routing to handle the displaying of views for the Couch app"""
 from flask import render_template, redirect, url_for, request, flash
-from flask_login import login_user, logout_user
-import requests
-from app import app, lm
 from app.models import model_dao
+from flask_login import logout_user, login_required
+from app import app, lm
 from app.rdio_session import RdioSession
 
 
@@ -27,9 +26,9 @@ def login():
 
 
 @app.route('/logout')
+@login_required
 def logout():
     """Logs the user out"""
-    requests.get('http://www.rdio.com/signout')
     logout_user()
     return redirect(url_for('login'))
 
@@ -37,6 +36,13 @@ def logout():
 def home():
     """Navigate user to home page"""
     return render_template('home.html')
+
+@app.route('/home')
+@login_required
+def home():
+    """Navigate user to home page"""
+    return render_template('home.html')
+
 
 @app.route('/oauth/authorize')
 def oauth_authorize():
@@ -54,21 +60,9 @@ def oauth_callback():
         flash('You did not authorize the request')
         return redirect(url_for('login'))
 
+    # log the user in to Rdio and Couch
     rdio_session = RdioSession()
-
     # get the Oauth access token
     access_token = rdio_session.get_access_token('oauth_callback', request.args['code'])
-
-    # set up the authenticated session with rdio
-    rdio_session.authenticate_session(access_token)
-
-    # get the current user
-    user = rdio_session.get_current_user(access_token)
-
-    # if the user is not already in the DB, add them
-    if not model_dao.get_user(id=user.id):
-        model_dao.add_user()
-
-    # log the user in
-    login_user(user, True)
-    return redirect(url_for('home'))
+    redirect_url = rdio_session.login_user(request.args['code'])
+    return redirect(redirect_url)
