@@ -1,7 +1,7 @@
 # coding=utf-8
 """Contains all the logic and routing to handle the displaying of views for the Couch app"""
 from flask import render_template, redirect, url_for, request, flash
-from flask_login import logout_user
+from flask_login import logout_user, login_required
 
 from app import app, lm
 from app.models.user import User
@@ -28,6 +28,7 @@ def login():
 
 
 @app.route('/logout')
+@login_required
 def logout():
     """Logs the user out"""
     logout_user()
@@ -35,6 +36,7 @@ def logout():
 
 
 @app.route('/home')
+@login_required
 def home():
     """Navigate user to home page"""
     return render_template('home.html')
