@@ -26,7 +26,6 @@ class RdioSession:
                                           access_token_url=access_token_url,
                                           base_url=base_url)
 
-
     def login_user(self, auth_code):
         # get the Oauth access token
         access_token_response = self._get_access_token_response('oauth_callback', auth_code)
@@ -52,11 +51,9 @@ class RdioSession:
         login_user(user, True)
         return url_for('home')
 
-
     def get_authorize_url(self, redirect_uri):
         params = {'response_type': 'code', 'redirect_uri': url_for(redirect_uri, _external=True)}
         return self.auth_service.get_authorize_url(**params)
-
 
     def _get_access_token_response(self, redirect_uri, auth_code):
         data = {'code': auth_code,
@@ -68,10 +65,8 @@ class RdioSession:
         access_token_response = post(self.auth_service.access_token_url, data=data)
         return access_token_response
 
-
     def _authenticate_session(self, access_token):
         self.session = self.auth_service.get_session(access_token)
-
 
     def get_current_user(self, access_token):
         response = self.session.post(self.auth_service.base_url,
@@ -83,4 +78,4 @@ class RdioSession:
         image_url = str(response[u'result'][u'dynamicIcon'])
         user_url = str(response[u'result'][u'url'])
 
-        return(User(id=id, first_name=first_name, last_name=last_name, image_url=image_url, user_url=user_url))
+        return User(id=id, first_name=first_name, last_name=last_name, image_url=image_url, user_url=user_url)

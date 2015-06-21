@@ -42,6 +42,8 @@ def add_user_group(self, user, group):
     user.add(group)
 
 
+# Access methods for the groups table
+
 def get_group(self, id):
     group = Group.query.filter_by(id=id).first()
     if not group:

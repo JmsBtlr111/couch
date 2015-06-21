@@ -32,10 +32,6 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-@app.route('/home')
-def home():
-    """Navigate user to home page"""
-    return render_template('home.html')
 
 @app.route('/home')
 @login_required
@@ -63,6 +59,6 @@ def oauth_callback():
     # log the user in to Rdio and Couch
     rdio_session = RdioSession()
     # get the Oauth access token
-    access_token = rdio_session.get_access_token('oauth_callback', request.args['code'])
+    # access_token = rdio_session._get_access_token_response('oauth_callback', request.args['code'])
     redirect_url = rdio_session.login_user(request.args['code'])
     return redirect(redirect_url)
