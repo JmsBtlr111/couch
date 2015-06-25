@@ -9,6 +9,15 @@ from group import Group
 # Access methods for User table
 
 
+def create_db():
+    db.create_all()
+
+
+def destroy_db():
+    db.session.remove()
+    db.drop_all()
+
+
 def get_user(id):
     user = User.query.filter_by(id=id).first()
     if not user:
@@ -17,12 +26,12 @@ def get_user(id):
         return user
 
 
-def add_user(first_name, last_name, image, user_url):
-    db.session.add(User(first_name, last_name, image, user_url))
+def add_user(user):
+    db.session.add(user)
     db.session.commit()
 
 
-def get_user_first_name(self, id):
+def get_user_first_name(id):
     user = User.query.filter_by(id=id).first()
     if not user:
         return None

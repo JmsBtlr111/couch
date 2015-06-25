@@ -6,7 +6,7 @@ from rauth import OAuth2Service
 from couch import app
 from requests import post
 from app.models.user import User #TODO: This should be using the model_dao.
-from app import db
+from app.models import model_dao
 
 
 class RdioSession:
@@ -44,8 +44,7 @@ class RdioSession:
 
         # if the user is not already in the DB, add them
         if not User.query.filter_by(id=user.id).first():
-            db.session.add(user)
-            db.session.commit()
+            model_dao.add_user(user)
 
         # log the user in
         login_user(user, True)
