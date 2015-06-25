@@ -3,19 +3,10 @@
 from flask import render_template, redirect, url_for, request, flash
 from app.models import model_dao
 from flask_login import logout_user, login_required
-from app import app, lm
+
+from app import app
 from app.rdio_session import RdioSession
 
-
-@lm.user_loader  # TODO: Figure out a more appropriate place for this
-def load_user(user_id):
-    """Load User specified by user_id.
-
-    :param user_id: String
-
-    Used by the flask_login LoginManager.
-    """
-    return model_dao.get_user(unicode(user_id))
 
 @app.route('/')
 @app.route('/index')
