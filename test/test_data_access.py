@@ -11,7 +11,6 @@ class test_data_access(TestCase):
 
     def setUp(self):
         app.config['TESTING'] = True
-        app.config['WTF_CSRF_ENABLED'] = False
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'test.db')
         self.app = app.test_client()
         model_dao.create_db()
