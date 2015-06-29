@@ -1,4 +1,5 @@
-from app import lm, model_dao
+from app import lm
+from app.models import model_dao
 
 @lm.user_loader
 def load_user(user_id):

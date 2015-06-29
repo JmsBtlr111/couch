@@ -30,6 +30,12 @@ def home():
     """Navigate user to home page"""
     return render_template('home.html')
 
+@app.route('/group')
+@login_required
+def home():
+    """Navigate user to home page"""
+    return render_template('group.html')
+
 
 @app.route('/oauth/authorize')
 def oauth_authorize():
