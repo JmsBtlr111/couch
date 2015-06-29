@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='group.css') }}">
+{% endblock %}
+
+{% block body %}
+<body>
+    <div class="container">
+        <div class="row">
+            <img class="two columns" src="http://i.imgur.com/TVR5TQg.png"/>
+            <div class="eight columns"></div>
+            <div class="two columns">{{ group_id }}</div>
+        </div>
+        <div class="row">
+            <div class="three columns u-pull-left">
+                {{ group_name}}
+            </div>
+            <div class="three columns u-pull-right">b</div>
+            <div class="u-full-width">c</div>
+        </div>
+    </div>
+</body>
+{% endblock %}

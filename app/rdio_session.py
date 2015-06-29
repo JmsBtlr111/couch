@@ -27,7 +27,6 @@ class RdioSession:
                                           base_url=base_url)
 
     def login_user(self, auth_code):
-        print(auth_code)
         # get the Oauth access token
         access_token_response = self._get_access_token_response('oauth_callback', auth_code)
 

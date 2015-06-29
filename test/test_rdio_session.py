@@ -25,3 +25,4 @@ class test_rdio_session(TestCase):
         redirect_uri = 'login'
         expected_url = 'http://www.test.com?redirect_uri=' + quote(url_for(redirect_uri, _external=True), '') + '&response_type=code&client_id=test_id'
         assert rdio_session.get_authorize_url('login') == expected_url
+

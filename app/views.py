@@ -1,7 +1,7 @@
 # coding=utf-8
 """Contains all the logic and routing to handle the displaying of views for the Couch app"""
 from flask import render_template, redirect, url_for, request, flash
-from app.models import model_dao
+from app.models.model_dao import get_group
 from flask_login import logout_user, login_required
 
 from app import app
@@ -51,3 +51,9 @@ def oauth_callback():
     rdio_session = RdioSession()
     redirect_url = rdio_session.login_user(request.args['code'])
     return redirect(redirect_url)
+
+
+@app.route('/group/<int:group_id>')
+@login_required
+def group(group_id):
+    return render_template('group.html', group_id=group_id, group_name=get_group(group_id))
