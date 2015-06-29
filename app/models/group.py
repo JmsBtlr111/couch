@@ -15,15 +15,10 @@ class Group(db.Model):
     name = db.Column(db.String(64), nullable=False)
     users = db.relationship('User', secondary=group_member_table, backref=db.backref('groups'), lazy='dynamic')
 
-    def add_user_to_group(self, user, group):
-        if not self.is_group_member(group, user):
+    def add_user(self, user):
+        if user not in self.users:
             self.users.append(user)
-            db.session.add(self)
             db.session.commit()
-
-    def is_group_member(self, group, user):
-        return self.users.filter(group_member_table.c.user_id == user.id) \
-                   .filter(group.id == group_member_table.c.group_id).count() > 0
 
     def __repr__(self):
         return '<Group (%s)>' % self.name

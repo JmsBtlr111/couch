@@ -32,7 +32,7 @@ def home():
 
 @app.route('/group')
 @login_required
-def home():
+def group():
     """Navigate user to home page"""
     return render_template('group.html')
 

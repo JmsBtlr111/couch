@@ -63,4 +63,4 @@ def get_group(group_id):
 
 
 def add_user_to_group(user, group):
-    group.add_user_to_group(user, group)
+    group.add_user(user)
