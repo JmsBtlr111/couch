@@ -27,12 +27,13 @@ class RdioSession:
                                           base_url=base_url)
 
     def login_user(self, auth_code):
+        print(auth_code)
         # get the Oauth access token
         access_token_response = self._get_access_token_response('oauth_callback', auth_code)
 
         # check for errors
         if access_token_response.status_code != 200:
-            flash(str(access_token_response.json()[u'error_description']))
+            flash(access_token_response.json())
             return url_for('login')
 
         # now that we have an authenticated access token, we can authenticate our session
