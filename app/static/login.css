@@ -1,0 +1,65 @@
+#header {
+    width: auto;
+    height: 200px;
+    border: none;
+	font-size: 1.4em;
+	margin: auto;
+	padding: 0;
+    text-transform: uppercase;
+    font-family: 'PetitaMediumRegular', Arial, sans-serif;
+    -webkit-font-smoothing: subpixel-antialiased;
+}
+
+#logo {
+	width: 203px;
+	height: 103px;
+	margin-left: 200px;
+    margin-top: 75px;
+    /* Transitions currently not implemented, worth thinking about later */
+	-webkit-transition: opacity 0.3s linear;
+	-moz-transition: opacity 0.3s linear;
+	-o-transition: opacity 0.3s linear;
+	transition: opacity 0.3s linear;
+	-webkit-transform: translateZ(0);
+}
+
+#about {
+    text-decoration: none;
+    margin-left: 865px;
+    margin-top: 152px;
+    letter-spacing: 0.3em;
+    position: absolute;
+    color: #000000;
+}
+
+#login_elements {}
+
+#rdio_logo {
+    width: 450px;
+	height: 450px;
+	left: 20px;
+	margin: auto;
+	position: absolute;
+	right: 0;
+	top: -110px;
+    /* Transitions currently not implemented, worth thinking about later */
+	-webkit-transition: opacity 0.3s linear;
+	-moz-transition: opacity 0.3s linear;
+	-o-transition: opacity 0.3s linear;
+	transition: opacity 0.3s linear;
+	-webkit-transform: translateZ(0);
+}
+
+#login_button {
+	left: 0;
+	margin: auto;
+	position: absolute;
+	right: 0;
+	top: 250px;
+    width: 200px;
+    background-color: #EEEEEE;
+    border-color: #999999;
+    /* Transitions currently not implemented, worth thinking about later */
+	transition: opacity 0.3s linear;
+	-webkit-transform: translateZ(0);
+}
