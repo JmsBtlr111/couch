@@ -39,21 +39,21 @@ def get_user_first_name(id):
         return user.first_name
 
 
-def get_user_groups(self, id):
-    user = User.query.filter_by(id=id).first()
+def get_user_groups(user_id):
+    user = User.query.filter_by(id=user_id).first()
     if not user:
         return None
     else:
         return user.groups
 
 
-def add_user_group(self, user, group):
+def add_user_group(user, group):
     user.add(group)
 
 
 # Access methods for the groups table
 
-def get_group(self, id):
+def get_group(id):
     group = Group.query.filter_by(id=id).first()
     if not group:
         return None
