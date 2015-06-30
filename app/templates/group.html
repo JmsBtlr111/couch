@@ -10,11 +10,16 @@
         <div class="row">
             <img class="two columns" src="http://i.imgur.com/TVR5TQg.png"/>
             <div class="eight columns"></div>
-            <div class="two columns">{{ group.id }}</div>
+            <div class="two columns">{{ group.name }}</div>
         </div>
         <div class="row">
             <div class="three columns u-pull-left">
-                {{ group.name}}
+                <ul>
+                    <li>Members</li>
+                    {% for user in group.users %}
+                    <li>{{ user.first_name }}</li>
+                    {% endfor %}
+                </ul>
             </div>
             <div class="three columns u-pull-right">b</div>
             <div class="u-full-width">c</div>
