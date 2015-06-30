@@ -46,6 +46,9 @@ def get_groups_by_user_id(user_id):
         return user.groups
 
 
+def add_user_group(self, user, group):
+    user.add(group)
+
 # Access methods for the groups table
 def create_group(name):
     new_group = Group(name)

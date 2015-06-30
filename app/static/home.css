@@ -17,3 +17,8 @@
 #groups_container td {
     text-align: center;
 }
+
+#groups_container a {
+    color: #333333;
+    text-decoration: none;
+}

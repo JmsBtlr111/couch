@@ -66,11 +66,13 @@ def group(group_id):
     # check group exists
     group = get_group(group_id)
     if group is None:
-        #Need an error message here
+        # Need an error message here
         return render_template('home.html')
 
     # add user to group if not currently a member
     if group not in current_user.groups:
         add_user_to_group(current_user, group)
+
+    # print(RdioSession().get_playback_token(url_for('group', group_id=group_id, _external=True)))
 
     return render_template('group.html', group=group)

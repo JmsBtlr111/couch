@@ -5,8 +5,9 @@ from flask_login import login_user
 from rauth import OAuth2Service
 from couch import app
 from requests import post
-from app.models.user import User #TODO: This should be using the model_dao.
+from app.models.user import User
 from app.models import model_dao
+from rdioapi import Rdio
 
 
 class RdioSession:
@@ -78,3 +79,10 @@ class RdioSession:
         user_url = str(response[u'result'][u'url'])
 
         return User(id=id, first_name=first_name, last_name=last_name, image_url=image_url, user_url=user_url)
+
+    def get_playback_token(self, domain_g):
+        rdio = Rdio(app.config['OAUTH_CREDENTIALS']['rdio']['id'], app.config['OAUTH_CREDENTIALS']['rdio']['secret'])
+        return rdio.getPlaybackToken(domain=domain_g)
+
+        # return self.session.post(self.auth_service.base_url,
+        #                          data={'domain': domain, 'method': 'getPlaybackToken'}).json()
