@@ -15,6 +15,9 @@ class Group(db.Model):
     name = db.Column(db.String(64), nullable=False)
     users = db.relationship('User', secondary=group_member_table, backref=db.backref('groups'), lazy='dynamic')
 
+    def __init__(self, name):
+        self.name = name
+
     def add_user(self, user):
         if user not in self.users:
             self.users.append(user)

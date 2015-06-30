@@ -1,14 +1,11 @@
 """Created 19/06/2015
 This file provides access methods to couch's persistence data"""
 
-from flask.ext.sqlalchemy import SQLAlchemy
-from app import app, db
+from app import db
 from user import User
-from group import Group, group_member_table
+from group import Group
 
-# Access methods for User table
-
-
+# Utility database methods
 def create_db():
     db.create_all()
 
@@ -18,6 +15,7 @@ def destroy_db():
     db.drop_all()
 
 
+# Access methods for User table
 def get_user(id):
     user = User.query.filter_by(id=id).first()
     if not user:
@@ -27,8 +25,9 @@ def get_user(id):
 
 
 def add_user(user):
-    db.session.add(user)
-    db.session.commit()
+    if get_user(user.id) is None:
+        db.session.add(user)
+        db.session.commit()
 
 
 def get_user_first_name(id):
@@ -48,10 +47,17 @@ def get_groups_by_user_id(user_id):
 
 
 # Access methods for the groups table
+def create_group(name):
+    new_group = Group(name)
+    db.session.add(new_group)
+    db.session.commit()
+    return new_group
+
 
 def add_group(group):
-    db.session.add(group)
-    db.session.commit()
+    if get_group(group.id) is None:
+        db.session.add(group)
+        db.session.commit()
 
 
 def get_group(group_id):
