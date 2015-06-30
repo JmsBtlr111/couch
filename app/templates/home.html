@@ -34,7 +34,17 @@
           {% endfor %}
           </tbody>
         </table>
-        
+        <form action="" method="post" name="group_form">
+            {{ create_new_group_form.hidden_tag() }}
+            <div class="row">
+                <div class="eight columns">
+                    {{ create_new_group_form.group_name(size=64) }}
+                </div>
+                <div class="four columns">
+                    <input class="button-primary" type="submit" value="Create Group">
+                </div>
+            </div>
+        </form>
     </div>
 </body>
 {% endblock %}

@@ -1,11 +1,12 @@
 # coding=utf-8
 """Contains all the logic and routing to handle the displaying of views for the Couch app"""
 from flask import render_template, redirect, url_for, request, flash
-from app.models.model_dao import get_group, add_user_group
+from app.models.model_dao import create_group, get_group, add_user_to_group
 from flask_login import logout_user, login_required, current_user
 
 from app import app
 from app.rdio_session import RdioSession
+from app.forms import CreateNewGroupForm
 
 
 @app.route('/')
@@ -24,11 +25,17 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route('/home')
+@app.route('/home', methods=['GET', 'POST'])
 @login_required
 def home():
     """Navigate user to home page"""
-    return render_template('home.html')
+    # form to
+    create_new_group_form = CreateNewGroupForm()
+    if create_new_group_form.validate_on_submit():
+        flash('group created with name "%s"' % create_new_group_form.group_name.data)
+        new_group = create_group(create_new_group_form.group_name.data)
+        return redirect(url_for('group', group_id=new_group.id))
+    return render_template('home.html', create_new_group_form=create_new_group_form)
 
 
 @app.route('/oauth/authorize')
@@ -64,7 +71,7 @@ def group(group_id):
 
     # add user to group if not currently a member
     if group not in current_user.groups:
-        add_user_group(current_user, group)
+        add_user_to_group(current_user, group)
 
     # print(RdioSession().get_playback_token(url_for('group', group_id=group_id, _external=True)))
 
