@@ -73,6 +73,6 @@ def group(group_id):
     if group not in current_user.groups:
         add_user_to_group(current_user, group)
 
-    # print(RdioSession().get_playback_token(url_for('group', group_id=group_id, _external=True)))
+    print(RdioSession().get_playback_token(url_for('group', group_id=group_id, _external=True)))
 
     return render_template('group.html', group=group)

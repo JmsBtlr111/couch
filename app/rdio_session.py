@@ -12,6 +12,7 @@ from rdioapi import Rdio
 
 class RdioSession:
     """This class is the Couch apps interface to the Rdio Api"""
+
     def __init__(self):
         name = 'rdio'
         client_id = app.config['OAUTH_CREDENTIALS']['rdio']['id']
@@ -81,8 +82,12 @@ class RdioSession:
         return User(id=id, first_name=first_name, last_name=last_name, image_url=image_url, user_url=user_url)
 
     def get_playback_token(self, domain_g):
-        rdio = Rdio(app.config['OAUTH_CREDENTIALS']['rdio']['id'], app.config['OAUTH_CREDENTIALS']['rdio']['secret'])
-        return rdio.getPlaybackToken(domain=domain_g)
+        # Rdio.rdio-call
+        #
+        # rdio = Rdio(app.config['OAUTH_CREDENTIALS']['rdio']['id'], app.config['OAUTH_CREDENTIALS']['rdio']['secret'])
+        # return rdio.getPlaybackToken(domain=domain_g)
 
-        # return self.session.post(self.auth_service.base_url,
-        #                          data={'domain': domain, 'method': 'getPlaybackToken'}).json()
+        unauthenticated_session = self.auth_service.get_session()
+
+        return unauthenticated_session.post(self.auth_service.base_url,
+                                            data={'domain': domain_g, 'method': 'getPlaybackToken'})
