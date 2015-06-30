@@ -23,5 +23,8 @@ class Group(db.Model):
             self.users.append(user)
             db.session.commit()
 
+    def __len__(self):
+        return int(len(self.users.all()))
+
     def __repr__(self):
         return '<Group (%s)>' % self.name
