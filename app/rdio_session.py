@@ -1,13 +1,12 @@
 # coding=utf-8
 
-from flask import url_for, flash
+from flask import url_for, flash, session
 from flask_login import login_user
 from rauth import OAuth2Service
 from couch import app
 from requests import post
 from app.models.user import User
 from app.models import model_dao
-from rdioapi import Rdio
 
 
 class RdioSession:
@@ -39,7 +38,10 @@ class RdioSession:
 
         # now that we have an authenticated access token, we can authenticate our session
         access_token = access_token_response.json()[u'access_token']
-        self._authenticate_session(access_token)
+        self.authenticate_session(access_token)
+
+        # store the access token for future requests
+        session['access_token'] = access_token
 
         # get the current user
         user = self.get_current_user(access_token)
@@ -66,11 +68,11 @@ class RdioSession:
         access_token_response = post(self.auth_service.access_token_url, data=data)
         return access_token_response
 
-    def _authenticate_session(self, access_token):
-        self.session = self.auth_service.get_session(access_token)
+    def authenticate_session(self, access_token):
+        self.authenticated_session = self.auth_service.get_session(access_token)
 
     def get_current_user(self, access_token):
-        response = self.session.post(self.auth_service.base_url,
+        response = self.authenticated_session.post(self.auth_service.base_url,
                                      data={'access_token': access_token, 'method': 'currentUser'}).json()
 
         id = str(response[u'result'][u'key'])
@@ -81,13 +83,7 @@ class RdioSession:
 
         return User(id=id, first_name=first_name, last_name=last_name, image_url=image_url, user_url=user_url)
 
-    def get_playback_token(self, domain_g):
-        # Rdio.rdio-call
-        #
-        # rdio = Rdio(app.config['OAUTH_CREDENTIALS']['rdio']['id'], app.config['OAUTH_CREDENTIALS']['rdio']['secret'])
-        # return rdio.getPlaybackToken(domain=domain_g)
-
-        unauthenticated_session = self.auth_service.get_session()
-
-        return unauthenticated_session.post(self.auth_service.base_url,
-                                            data={'domain': domain_g, 'method': 'getPlaybackToken'})
+    def get_playback_token(self, domain):
+        response = self.authenticated_session.post(self.auth_service.base_url,
+                                            data={'domain': domain, 'method': 'getPlaybackToken'}).json()
+        return response

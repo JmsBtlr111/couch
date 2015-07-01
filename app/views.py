@@ -1,6 +1,6 @@
 # coding=utf-8
 """Contains all the logic and routing to handle the displaying of views for the Couch app"""
-from flask import render_template, redirect, url_for, request, flash
+from flask import render_template, redirect, url_for, request, flash, session
 from app.models.model_dao import create_group, get_group, add_user_to_group
 from flask_login import logout_user, login_required, current_user
 
@@ -73,6 +73,9 @@ def group(group_id):
     if group not in current_user.groups:
         add_user_to_group(current_user, group)
 
-    print(RdioSession().get_playback_token(url_for('group', group_id=group_id, _external=True)))
+    rdio_session = RdioSession()
+    rdio_session.authenticate_session(session['access_token'])
+
+    print(rdio_session.get_playback_token('127.0.0.1'))
 
     return render_template('group.html', group=group)
