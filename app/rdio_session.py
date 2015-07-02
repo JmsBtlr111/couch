@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from flask import url_for, flash, session
+from flask import url_for, flash
 from flask_login import login_user
 from rauth import OAuth2Service
 from couch import app

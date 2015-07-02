@@ -57,6 +57,7 @@ def oauth_callback():
     # log the user in to Rdio and Couch
     rdio_session = RdioSession()
     redirect_url = rdio_session.login_user(request.args['code'])
+    print(rdio_session.get_playback_token(url_for('oauth_callback', _external=True)))
     return redirect(redirect_url)
 
 
