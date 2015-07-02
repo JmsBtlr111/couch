@@ -77,6 +77,9 @@ def group(group_id):
     rdio_session = RdioSession()
     rdio_session.authenticate_session(session['access_token'])
 
-    print(rdio_session.get_playback_token('127.0.0.1'))
+    response = rdio_session.get_playback_token('127.0.0.1')
+    print(response)
+    if not response[u'status'] == "ok":
+        raise RuntimeError("Unable to acquire playback token for group " + group_id)
 
-    return render_template('group.html', group=group)
+    return render_template('group.html', group=group, playback_token=response[u'result'], domain="127.0.0.1")

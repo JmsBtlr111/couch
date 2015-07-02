@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from flask import url_for, flash
+from flask import url_for, flash, session
 from flask_login import login_user
 from rauth import OAuth2Service
 from couch import app
@@ -73,7 +73,7 @@ class RdioSession:
 
     def get_current_user(self, access_token):
         response = self.authenticated_session.post(self.auth_service.base_url,
-                                     data={'access_token': access_token, 'method': 'currentUser'}).json()
+                                                   data={'access_token': access_token, 'method': 'currentUser'}).json()
 
         id = str(response[u'result'][u'key'])
         first_name = str(response[u'result'][u'firstName'])
@@ -85,5 +85,5 @@ class RdioSession:
 
     def get_playback_token(self, domain):
         response = self.authenticated_session.post(self.auth_service.base_url,
-                                            data={'domain': domain, 'method': 'getPlaybackToken'}).json()
+                                                   data={'domain': domain, 'method': 'getPlaybackToken'}).json()
         return response

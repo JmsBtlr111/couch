@@ -12,6 +12,58 @@
             <div class="eight columns"></div>
             <div class="two columns">{{ group.name }}</div>
         </div>
+        <div id="upsell" class="alert alert-info alert-dismissable">
+      <div id="subscriber">You are an Rdio subscriber. You're awesome.</div>
+      <div id="trial">You are an Rdio trial user, Subscribe now!</div>
+      <div id="free">You are an Rdio Free user with <span id="remaining"></span>% of your quota remaining, subscribe now!</div>
+      <div id="nobody">To hear full tracks subscribe to Rdio.</div>
+    </div>
+
+    <div id="apiswf"></div>
+      <div class="well" style="overflow: hidden;">
+        <div class="row" style="margin-bottom: 10px;">
+          <div class="col-md-2">Enter Album Key</div>
+          <div class="col-md-10">
+            <input id="play_key" class="form-control" value="a239851">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="playControls btn-group">
+              <button id="play" class="btn btn-default"><i class="fa fa-play-circle"></i> Play</button>
+              <button id="stop" class="btn btn-default"><i class="fa fa-stop"></i> Stop</button>
+              <button id="pause" class="btn btn-default"><i class="fa fa-pause"></i> Pause</button>
+              <button id="previous" class="btn btn-default"><i class="fa fa-step-backward"></i> Previous</button>
+              <button id="next" class="btn btn-default"><i class="fa fa-step-forward"></i> Next</button>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div id="freq" class="frequency">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row well">
+        <div class="artistAlbumInfo well col-md-6 ">
+          <h3><span id="artist"></span> - <span id="track"></span></h3>
+          <img src="" id="art" class="albumArt">
+        </div>
+        <div class="col-md-6">
+          <h3 id="album"></h3>
+          <h4>Playstate <p id="playState"></p></h4>
+          <h4>Position <p id="position"></p></h4>
+        </div>
+      </div>
         <div class="row">
             <div class="three columns u-pull-left">
                 <ul>
@@ -26,5 +78,10 @@
         </div>
     </div>
 </body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script>
+    var playback_token = ['{{ playback_token }}'];
+    var domain = ['{{ domain }}'];
+</script>
 <script src="../static/group.js"></script>
 {% endblock %}
