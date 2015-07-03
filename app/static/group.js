@@ -8,8 +8,8 @@ var apiswf = null;
 $(document).ready(function () {
     // on page load use SWFObject to load the API swf into div#apiswf
     var flashvars = {
-        'playbackToken': playback_token, // from token.js
-        'domain': domain,                // from token.js
+        'playbackToken': playback_token,
+        'domain': domain,
         'listener': 'callback_object'    // the global name of the object that will receive callbacks from the SWF
     };
     var params = {
@@ -52,19 +52,6 @@ callback_object.ready = function ready(user) {
         frequencies: '10-band',
         period: 100
     });
-
-    if (user == null) {
-        $('#nobody').show();
-    } else if (user.isSubscriber) {
-        $('#subscriber').show();
-    } else if (user.isTrial) {
-        $('#trial').show();
-    } else if (user.isFree) {
-        $('#remaining').text(user.freeRemaining);
-        $('#free').show();
-    } else {
-        $('#nobody').show();
-    }
 
     console.log(user);
 }
@@ -137,4 +124,10 @@ callback_object.updateFrequencyData = function updateFrequencyData(arrayAsString
     $('#freq div').each(function (i) {
         $(this).width(parseInt(parseFloat(arr[i]) * 500));
     })
+}
+
+function doSearch() {
+    search_term = document.getElementById("search_key").value;
+    var response = $.post('https://services.rdio.com/api/1/', {'query':'nirvana', 'types':'Track'});
+    console.log(response);
 }
