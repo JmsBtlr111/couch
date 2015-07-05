@@ -61,25 +61,29 @@ def oauth_callback():
     return redirect(redirect_url)
 
 
-@app.route('/group/<int:group_id>')
+@app.route('/group/<int:group_id>',  methods=['POST', 'GET'])
 @login_required
 def group(group_id):
-    # check group exists
-    group = get_group(group_id)
-    if group is None:
-        # Need an error message here
-        return render_template('home.html')
+    if request.method == 'POST':
+        print(request.args)
+    elif request.method == 'GET':
+        print(request.args)
+        # check group exists
+        group = get_group(group_id)
+        if group is None:
+            # Need an error message here
+            return render_template('home.html')
 
-    # add user to group if not currently a member
-    if group not in current_user.groups:
-        add_user_to_group(current_user, group)
+        # add user to group if not currently a member
+        if group not in current_user.groups:
+            add_user_to_group(current_user, group)
 
-    rdio_session = RdioSession()
-    rdio_session.authenticate_session(session['access_token'])
+        rdio_session = RdioSession()
+        rdio_session.authenticate_session(session['access_token'])
 
-    response = rdio_session.get_playback_token('127.0.0.1')
-    print(response)
-    if not response[u'status'] == "ok":
-        raise RuntimeError("Unable to acquire playback token for group " + group_id)
+        response = rdio_session.get_playback_token('127.0.0.1')
+        print(response)
+        if not response[u'status'] == "ok":
+            raise RuntimeError("Unable to acquire playback token for group " + group_id)
 
-    return render_template('group.html', group=group, playback_token=response[u'result'], domain="127.0.0.1")
+        return render_template('group.html', group=group, playback_token=response[u'result'], domain="127.0.0.1")

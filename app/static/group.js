@@ -128,6 +128,5 @@ callback_object.updateFrequencyData = function updateFrequencyData(arrayAsString
 
 function doSearch() {
     search_term = document.getElementById("search_key").value;
-    var response = $.post('https://services.rdio.com/api/1/', {'query':'nirvana', 'types':'Track'});
-    console.log(response);
+    var response = $.get('', {'query':search_term, 'types':'Track'}, dataType="json");
 }
