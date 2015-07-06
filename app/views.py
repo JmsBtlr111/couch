@@ -1,6 +1,6 @@
 # coding=utf-8
 """Contains all the logic and routing to handle the displaying of views for the Couch app"""
-from flask import render_template, redirect, url_for, request, flash, session
+from flask import render_template, redirect, url_for, request, flash, session, Response, json
 from app.models.model_dao import create_group, get_group, add_user_to_group
 from flask_login import logout_user, login_required, current_user
 
@@ -64,26 +64,31 @@ def oauth_callback():
 @app.route('/group/<int:group_id>',  methods=['POST', 'GET'])
 @login_required
 def group(group_id):
-    if request.method == 'POST':
-        print(request.args)
-    elif request.method == 'GET':
-        print(request.args)
-        # check group exists
-        group = get_group(group_id)
-        if group is None:
-            # Need an error message here
-            return render_template('home.html')
+    # check group exists
+    group = get_group(group_id)
+    if group is None:
+        # TODO: Need an error message here
+        return render_template('home.html')
 
-        # add user to group if not currently a member
-        if group not in current_user.groups:
-            add_user_to_group(current_user, group)
+    # add user to group if not currently a member
+    if group not in current_user.groups:
+        add_user_to_group(current_user, group)
 
-        rdio_session = RdioSession()
-        rdio_session.authenticate_session(session['access_token'])
+    rdio_session = RdioSession()
+    rdio_session.authenticate_session(session['access_token'])
 
-        response = rdio_session.get_playback_token('127.0.0.1')
-        print(response)
-        if not response[u'status'] == "ok":
-            raise RuntimeError("Unable to acquire playback token for group " + group_id)
+    response = rdio_session.get_playback_token('127.0.0.1')
+    print(response)
+    if not response[u'status'] == "ok":
+        raise RuntimeError("Unable to acquire playback token for group " + group_id)
 
-        return render_template('group.html', group=group, playback_token=response[u'result'], domain="127.0.0.1")
+    return render_template('group.html', group=group, playback_token=response[u'result'], domain="127.0.0.1")
+
+@app.route('/search',  methods=['GET'])
+@login_required
+def search():
+    rdio_session = RdioSession()
+    rdio_session.authenticate_session(session['access_token'])
+    search_results = rdio_session.do_search(request.args)
+    response = Response(json.dumps(search_results), status=200, mimetype='application/json')
+    return response

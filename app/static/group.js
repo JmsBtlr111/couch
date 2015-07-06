@@ -128,5 +128,24 @@ callback_object.updateFrequencyData = function updateFrequencyData(arrayAsString
 
 function doSearch() {
     search_term = document.getElementById("search_key").value;
-    var response = $.get('', {'query':search_term, 'types':'Track'}, dataType="json");
+    //var response = $.get('/search', {'query':search_term, 'types':'Track'}, success:  dataType="json");
+    //console.log(response)
+    $.ajax({
+    url: '/search',
+    data: {
+        'query': search_term,
+        'types':'Track'
+    },
+    type: "GET",
+    dataType : "json",
+    success: function( response ) {
+        console.log(response)
+    },
+    error: function( xhr, status, errorThrown ) {
+        alert( "Sorry, there was a problem!" );
+        console.log( "Error: " + errorThrown );
+        console.log( "Status: " + status );
+        console.dir( xhr );
+    }
+    });
 }

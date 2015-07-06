@@ -19,6 +19,7 @@ class RdioSession:
         authorize_url = 'https://www.rdio.com/oauth2/authorize'
         access_token_url = 'https://services.rdio.com/oauth2/token'
         base_url = 'https://services.rdio.com/api/1/'
+        authenticated_session = None
 
         self.auth_service = OAuth2Service(name=name,
                                           client_id=client_id,
@@ -87,3 +88,10 @@ class RdioSession:
         response = self.authenticated_session.post(self.auth_service.base_url,
                                                    data={'domain': domain, 'method': 'getPlaybackToken'}).json()
         return response
+
+    def do_search(self, search_info):
+        search_results = self.authenticated_session.post(self.auth_service.base_url,
+                                                         data={'query': search_info['query'],
+                                                               'types': search_info['types'],
+                                                               'method': 'search'}).json()
+        return search_results[u'result']
