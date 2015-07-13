@@ -2,6 +2,7 @@
 """Contains all the logic and routing to handle the displaying of views for the Couch app"""
 from flask import render_template, redirect, url_for, request, flash, session, Response, json
 from app.models.model_dao import create_group, get_group, add_user_to_group
+import redis
 from flask_login import logout_user, login_required, current_user
 
 from app import app
@@ -61,7 +62,7 @@ def oauth_callback():
     return redirect(redirect_url)
 
 
-@app.route('/group/<int:group_id>',  methods=['POST', 'GET'])
+@app.route('/group/<int:group_id>', methods=['POST', 'GET'])
 @login_required
 def group(group_id):
     # check group exists
@@ -84,11 +85,23 @@ def group(group_id):
 
     return render_template('group.html', group=group, playback_token=response[u'result'], domain="127.0.0.1")
 
-@app.route('/search',  methods=['GET'])
+
+@app.route('/search', methods=['GET'])
 @login_required
 def search():
     rdio_session = RdioSession()
     rdio_session.authenticate_session(session['access_token'])
     search_results = rdio_session.do_search(request.args)
     response = Response(json.dumps(search_results), status=200, mimetype='application/json')
+    return response
+
+
+@app.route('/add_track', methods=['GET'])
+@login_required
+def add_track():
+    redis_connection = redis.StrictRedis(host='127.0.0.1', port=6379, db=0)
+    redis_connection.rpush(request.args['group_id'], request.args['track'])
+    playlist = redis_connection.lrange(request.args['group_id'], 0, -1)
+    response = Response(json.dumps({'playlist': playlist}), status=200,
+                        mimetype='application/json')
     return response

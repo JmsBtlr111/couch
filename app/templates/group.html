@@ -1,76 +1,85 @@
 {% extends "base.html" %}
 
 {% block head %}
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='group.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='group.css') }}">
 {% endblock %}
 
 {% block body %}
-<body>
+    <body>
     <div class="container">
         <div class="row">
             <img class="two columns" src="http://i.imgur.com/TVR5TQg.png"/>
+
             <div class="eight columns"></div>
             <div class="two columns">{{ group.name }}</div>
         </div>
 
         <div id="apiswf"></div>
-          <div class="well" style="overflow: hidden;">
+        <div class="well" style="overflow: hidden;">
             <div class="row" style="margin-bottom: 10px;">
-              <div class="col-md-2">Enter Album Key</div>
-              <div class="col-md-10">
-                <input id="play_key" class="form-control" value="a239851">
-              </div>
+                <div class="col-md-2">Enter Album Key</div>
+                <div class="col-md-10">
+                    <input id="play_key" class="form-control" value="a239851">
+                </div>
             </div>
             <div class="row" style="margin-bottom: 10px;">
-              <div class="col-md-2">Search For Tracks</div>
-              <div class="col-md-10">
-                <input id="search_key" class="form-control" type="text">
-                <input id="search_button" class="form-control" type="button" value="Go" onclick="doSearch();">
-              </div>
+                <div class="col-md-2">Search For Tracks</div>
+                <div class="col-md-10">
+                    <input id="search_key" class="form-control" type="text">
+                    <input id="search_button" class="form-control" type="button" value="Go" onclick="doSearch();">
+                </div>
+            </div>
+            <div class="row" style="margin-bottom: 10px;">
+                <div class="col-md-2">Add Track To Playlist</div>
+                <div class="col-md-10">
+                    <input id="add_track" class="form-control" type="text">
+                    <input id="add_track_button" class="form-control" type="button" value="Add" onclick="addTrack();">
+                </div>
             </div>
             <div class="row">
-              <div class="col-md-6">
-                <div class="playControls btn-group">
-                  <button id="play" class="btn btn-default"><i class="fa fa-play-circle"></i> Play</button>
-                  <button id="stop" class="btn btn-default"><i class="fa fa-stop"></i> Stop</button>
-                  <button id="pause" class="btn btn-default"><i class="fa fa-pause"></i> Pause</button>
-                  <button id="previous" class="btn btn-default"><i class="fa fa-step-backward"></i> Previous</button>
-                  <button id="next" class="btn btn-default"><i class="fa fa-step-forward"></i> Next</button>
+                <div class="col-md-6">
+                    <div class="playControls btn-group">
+                        <button id="play" class="btn btn-default"><i class="fa fa-play-circle"></i> Play</button>
+                        <button id="stop" class="btn btn-default"><i class="fa fa-stop"></i> Stop</button>
+                        <button id="pause" class="btn btn-default"><i class="fa fa-pause"></i> Pause</button>
+                        <button id="previous" class="btn btn-default"><i class="fa fa-step-backward"></i> Previous
+                        </button>
+                        <button id="next" class="btn btn-default"><i class="fa fa-step-forward"></i> Next</button>
+                    </div>
                 </div>
-              </div>
-              <div class="col-md-6">
-                <div id="freq" class="frequency">
-                  <div></div>
-                  <div></div>
-                  <div></div>
-                  <div></div>
-                  <div></div>
-                  <div></div>
-                  <div></div>
-                  <div></div>
-                  <div></div>
-                  <div></div>
+                <div class="col-md-6">
+                    <div id="freq" class="frequency">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
                 </div>
-              </div>
             </div>
-          </div>
-          <div class="row well">
+        </div>
+        <div class="row well">
             <div class="artistAlbumInfo well col-md-6 ">
-              <h3><span id="artist"></span> - <span id="track"></span></h3>
-              <img src="" id="art" class="albumArt">
+                <h3><span id="artist"></span> - <span id="track"></span></h3>
+                <img src="" id="art" class="albumArt">
             </div>
             <div class="col-md-6">
-              <h3 id="album"></h3>
-              <h4>Playstate <p id="playState"></p></h4>
-              <h4>Position <p id="position"></p></h4>
+                <h3 id="album"></h3>
+                <h4>Playstate <p id="playState"></p></h4>
+                <h4>Position <p id="position"></p></h4>
             </div>
-          </div>
+        </div>
         <div class="row">
             <div class="three columns u-pull-left">
                 <ul>
                     <li>Members</li>
                     {% for user in group.users %}
-                    <li>{{ user.first_name }}</li>
+                        <li>{{ user.first_name }}</li>
                     {% endfor %}
                 </ul>
             </div>
@@ -78,11 +87,12 @@
             <div class="u-full-width">c</div>
         </div>
     </div>
-</body>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-<script>
-    var playback_token = ['{{ playback_token }}'];
-    var domain = ['{{ domain }}'];
-</script>
-<script src="../static/group.js"></script>
+    </body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script>
+        var playback_token = ['{{ playback_token }}'];
+        var domain = ['{{ domain }}'];
+        var group_id = ['{{ group.id }}'];
+    </script>
+    <script src="../static/group.js"></script>
 {% endblock %}
