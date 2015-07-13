@@ -6,7 +6,7 @@ from user import User
 
 group_member_table = db.Table('users', db.metadata,
                               db.Column('group_id', db.Integer, db.ForeignKey('group.id')),
-                              db.Column('user_id', db.String(64), db.ForeignKey('user.id')))
+                              db.Column('user_id', db.Integer, db.ForeignKey('user.id')))
 
 
 class Group(db.Model):

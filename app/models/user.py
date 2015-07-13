@@ -5,7 +5,8 @@ from app import db
 
 class User(db.Model):
     """The Couch app user model"""
-    id = db.Column(db.String(64), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
+    rdio_key = db.Column(db.String(64), unique=True, nullable=False)
     first_name = db.Column(db.String(64), nullable=False)
     last_name = db.Column(db.String(64), nullable=False)
     image_url = db.Column(db.String(128), nullable=False)
