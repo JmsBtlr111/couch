@@ -14,7 +14,8 @@ from app.forms import CreateNewGroupForm
 @app.route('/login')
 def login():
     """Displays the login page"""
-    return render_template('login.html')
+    #return render_template('login.html')
+    return app.send_static_file('index.html')
 
 
 @app.route('/logout')
