@@ -8,10 +8,10 @@ application.config(['$stateProvider', '$urlRouterProvider', function ($stateProv
         .state('home', {
             url: '/',
             templateUrl: 'partials/home.html',
-            controller: 'HomeCtrl'
-            //data: {
-            //    requireLogin: true
-            //}
+            controller: 'HomeCtrl',
+            data: {
+                requireLogin: true
+            }
         })
         .state('group', {
             url: '/group/:id',
@@ -28,22 +28,44 @@ application.config(['$stateProvider', '$urlRouterProvider', function ($stateProv
 application.controller('HeaderCtrl', ['$scope', '$window', function ($scope, $window) {
 }]);
 
-application.controller('HomeCtrl', ['$scope', '$window', '$http', function ($scope, $window, $http) {
+application.controller('HomeCtrl', ['$scope', '$window', '$http', '$rootScope', function ($scope, $window, $http, $rootScope ) {
     var userKey = $window.R.currentUser.get('key');
 
-    $http.get('/api/user/1')
-        .success(function (data, status, headers, config) {
-            $scope.user = data;
-            alert(status);
+    $http.get('/api/user?q={"filters":[{"name":"rdio_key","op":"eq","val":"' + userKey.toString() +'"}]}')
+        .success(function (data) {
+            $rootScope.user = data['objects'][0];
         })
-        .error(function (data, status, headers, config) {
+        .error(function (data, status) {
             alert(status);
         });
 
+    $scope.createNewGroup = function (newGroupName) {
+        $http.post('/api/group', {
+            'name': newGroupName
+        }).success(function (data) {
+            $rootScope.user.groups.push(data);
+        }).error(function () {
+        });
+    };
 }]);
 
-application.controller('GroupCtrl', ['$scope', function ($scope) {
+application.controller('GroupCtrl', ['$scope', '$stateParams', '$http', '$rootScope', function ($scope, $stateParams, $http, $rootScope) {
+    var group = {};
 
+    $http.get('/api/group/' + $stateParams.id)
+        .success(function (data) {
+            group = data;
+        });
+
+    $http.get('/api/user/' + $rootScope.user.id)
+        .success(function (data) {
+            if (!(group in data.groups)) {
+                data.groups.push(group);
+                $http.put('/api/user/' + $rootScope.user.id, {
+                    'groups':data.groups
+                });
+            };
+        });
 }]);
 
 application.controller('LoginCtrl', ['$scope', '$window', '$state', '$http', function ($scope, $window, $state, $http) {
@@ -62,18 +84,21 @@ application.controller('LoginCtrl', ['$scope', '$window', '$state', '$http', fun
                     'last_name':last_name,
                     'image_url':image_url,
                     'user_url':user_url
-                }).success(function (results) {
-                    alert(results.response);
-                }).error(function (results) {
-                    alert(results.response);
+                }).success(function () {
+                    $state.go('home');
+                }).error(function (data, status) {
+                    if (status == 400) {
+                        $state.go('home');
+                    }
                 });
-                $state.go('home');
-            };
+            }
         });
     };
 }]);
 
 application.run(['$rootScope', '$state', '$window', function ($rootScope, $state, $window) {
+    $rootScope.user = {};
+
     $rootScope.$on('$stateChangeStart', function (e, to) {
         if (to.data && to.data.requireLogin) {
             if ($window.R.authenticated()) {

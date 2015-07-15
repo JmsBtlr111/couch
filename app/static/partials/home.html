@@ -1,8 +1,14 @@
 <div class="container">
-    <h3>Groups</h3>
+    <h3>{{ user.first_name }}</h3>
     <ul class="list-group">
         <li class="list-group-item" ng-repeat="group in user.groups">
             <a ui-sref="group({id:group.id})">{{ group.name }}</a>
         </li>
     </ul>
+    <div class="input-group">
+        <input ng-model="newGroupName" type="text" class="form-control" placeholder="Enter group name">
+        <span class="input-group-btn">
+            <button class="btn btn-default" ng-click="createNewGroup(newGroupName)">Create!</button>
+        </span>
+    </div>
 </div>
