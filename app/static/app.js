@@ -59,7 +59,7 @@ application.controller('GroupCtrl', ['$scope', '$stateParams', '$http', '$rootSc
 
     $http.get('/api/user/' + $rootScope.user.id)
         .success(function (data) {
-            if (!(group in data.groups)) {
+            if ((group in data.groups)) {
                 data.groups.push(group);
                 $http.put('/api/user/' + $rootScope.user.id, {
                     'groups':data.groups
