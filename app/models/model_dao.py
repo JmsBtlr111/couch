@@ -18,10 +18,12 @@ def destroy_db():
 # Access methods for User table
 def get_user(id):
     user = User.query.filter_by(id=id).first()
-    if not user:
-        return None
-    else:
-        return user
+    return user
+
+
+def get_all_users():
+    users = User.query.all()
+    return users
 
 
 def add_user(user):

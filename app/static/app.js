@@ -75,7 +75,7 @@ application.controller('LoginCtrl', ['$scope', '$window', '$state', '$http', fun
                 var rdio_key = $window.R.currentUser.get('key');
                 var first_name = $window.R.currentUser.get('firstName');
                 var last_name = $window.R.currentUser.get('lastName');
-                var image_url = $window.R.currentUser.get('baseIcon');
+                var image_url = $window.R.currentUser.get('icon');
                 var user_url = $window.R.currentUser.get('url');
 
                 $http.post('/api/user', {
