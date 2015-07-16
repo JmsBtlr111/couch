@@ -1,5 +1,6 @@
 """Created 19/06/2015
 This file provides access methods to couch's persistence data"""
+from sqlite3 import IntegrityError
 
 from app import db
 from user import User
@@ -15,6 +16,26 @@ def destroy_db():
     db.drop_all()
 
 
+def create_model_from_args(args, model_type):
+    if model_type == 'user':
+        model = User(id=args['id'],
+                     first_name=args['first_name'],
+                     last_name=args['last_name'],
+                     image_url=args['image_url'],
+                     user_url=args['user_url'])
+    elif model_type == 'group':
+        model = Group(name=['name'])
+    else:
+        model = None
+    add_model_to_db(model)
+    return model
+
+
+def add_model_to_db(model):
+    db.session.add(model)
+    db.session.commit()
+
+
 # Access methods for User table
 def get_user(id):
     user = User.query.filter_by(id=id).first()
@@ -25,31 +46,6 @@ def get_all_users():
     users = User.query.all()
     return users
 
-
-def add_user(user):
-    if get_user(user.id) is None:
-        db.session.add(user)
-        db.session.commit()
-
-
-def get_user_first_name(id):
-    user = User.query.filter_by(id=id).first()
-    if not user:
-        return None
-    else:
-        return user.first_name
-
-
-def get_groups_by_user_id(user_id):
-    user = User.query.filter_by(id=user_id).first()
-    if not user:
-        return None
-    else:
-        return user.groups
-
-
-def add_user_group(self, user, group):
-    user.add(group)
 
 # Access methods for the groups table
 def create_group(name):
