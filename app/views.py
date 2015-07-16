@@ -3,9 +3,9 @@
 from flask import request, Response, json
 from flask_restful import Resource, reqparse
 import redis
+from flask.ext.socketio import join_room, leave_room, emit
 
 from app import app
-from app.models import model_dao
 
 
 parser = reqparse.RequestParser()
@@ -19,7 +19,14 @@ def login():
     return app.send_static_file('index.html')
 
 
-@app.route('/add_track', methods=['GET'])
+# Called when initial web socket connection is created
+@socketio.on('connect', namespace='/group')
+def test_connect():
+    print "Connected yo"
+    emit('my response', {'data': 'Connected', 'count': 0})
+
+
+@app.route('/add_track', methods=['GET'])    
 def add_track():
     redis_connection = redis.StrictRedis(host='127.0.0.1', port=6379, db=0)
     redis_connection.rpush(request.args['group_id'], request.args['track'])

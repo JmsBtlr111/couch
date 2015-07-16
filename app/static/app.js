@@ -30,6 +30,7 @@ application.controller('HeaderCtrl', ['$scope', '$window', function ($scope, $wi
 
 application.controller('HomeCtrl', ['$scope', '$window', '$http', '$rootScope', function ($scope, $window, $http, $rootScope ) {
     var userKey = $window.R.currentUser.get('key');
+    console.log(userKey);
 
     $http.get('/api/user?q={"filters":[{"name":"rdio_key","op":"eq","val":"' + userKey.toString() +'"}]}')
         .success(function (data) {
@@ -49,7 +50,7 @@ application.controller('HomeCtrl', ['$scope', '$window', '$http', '$rootScope', 
     };
 }]);
 
-application.controller('GroupCtrl', ['$scope', '$stateParams', '$http', '$rootScope', function ($scope, $stateParams, $http, $rootScope) {
+application.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$rootScope', function ($scope, $stateParams, $window, $http, $rootScope) {
     var group = {};
 
     $http.get('/api/group/' + $stateParams.id)
@@ -66,6 +67,18 @@ application.controller('GroupCtrl', ['$scope', '$stateParams', '$http', '$rootSc
                 });
             };
         });
+    var namespace = '/group';
+    var socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
+    socket.on('connect', function() {
+                socket.emit('my event', {data: 'I\'m connected!'});
+    });
+
+    // event handler for server sent data
+    // the data is displayed in the "Received" section of the page
+    socket.on('my response', function(msg) {
+        console.log(msg.data)
+    });
+    $window.R.player.play({source: "a3032151"})
 }]);
 
 application.controller('LoginCtrl', ['$scope', '$window', '$state', '$http', function ($scope, $window, $state, $http) {
