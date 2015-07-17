@@ -3,9 +3,11 @@
 from flask import request, Response, json
 from flask_restful import Resource, reqparse
 import redis
+from app import socketio
 from flask.ext.socketio import join_room, leave_room, emit
 
 from app import app
+from models import model_dao
 
 
 parser = reqparse.RequestParser()
@@ -24,16 +26,6 @@ def login():
 def test_connect():
     print "Connected yo"
     emit('my response', {'data': 'Connected', 'count': 0})
-
-
-@app.route('/add_track', methods=['GET'])    
-def add_track():
-    redis_connection = redis.StrictRedis(host='127.0.0.1', port=6379, db=0)
-    redis_connection.rpush(request.args['group_id'], request.args['track'])
-    playlist = redis_connection.lrange(request.args['group_id'], 0, -1)
-    response = Response(json.dumps({'playlist': playlist}), status=200,
-                        mimetype='application/json')
-    return response
 
 
 class UserView(Resource):
