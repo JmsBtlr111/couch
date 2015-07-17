@@ -12,7 +12,9 @@ db = SQLAlchemy(app)
 make_class_dictable(db.Model)
 api = Api(app)
 
-from app.views import UserView, UserListView
+from app.views import UserView, UserListView, GroupView, GroupListView
 
 api.add_resource(UserView, '/api/user/<string:user_id>')
 api.add_resource(UserListView, '/api/user')
+api.add_resource(GroupView, '/api/group/<int:group_id>')
+api.add_resource(GroupListView, '/api/group')
