@@ -24,7 +24,7 @@ def create_model_from_args(args, model_type):
                      image_url=args['image_url'],
                      user_url=args['user_url'])
     elif model_type == 'group':
-        model = Group(name=['name'])
+        model = Group(name=args['name'])
     return model
 
 

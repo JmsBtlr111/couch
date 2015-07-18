@@ -3,14 +3,11 @@
 from flask import request, Response, json
 from flask_restful import Resource, reqparse
 import redis
-from app import socketio
-from flask.ext.socketio import join_room, leave_room, emit
+#from app import socketio
+#from flask.ext.socketio import join_room, leave_room, emit
 
 from app import app
 from models import model_dao
-
-
-parser = reqparse.RequestParser()
 
 
 @app.route('/')
@@ -22,10 +19,10 @@ def login():
 
 
 # Called when initial web socket connection is created
-@socketio.on('connect', namespace='/group')
-def test_connect():
-    print "Connected yo"
-    emit('my response', {'data': 'Connected', 'count': 0})
+#@socketio.on('connect', namespace='/group')
+# def test_connect():
+#     print "Connected yo"
+#     emit('my response', {'data': 'Connected', 'count': 0})
 
 
 class UserView(Resource):
@@ -38,11 +35,14 @@ class UserView(Resource):
 
 
 class UserListView(Resource):
-    parser.add_argument('id', type=str, required=True, help='id must be specified')
-    parser.add_argument('first_name', type=str, required=True, help='first name must be specified')
-    parser.add_argument('last_name', type=str, required=True, help='last name must be specified')
-    parser.add_argument('image_url', type=str, required=True, help='image URL must be specified')
-    parser.add_argument('user_url', type=str, required=True, help='user URL must be specified')
+
+    def __init__(self):
+        self.parser = reqparse.RequestParser(bundle_errors=True)
+        self.parser.add_argument('id', type=str, required=True, help='id must be specified')
+        self.parser.add_argument('first_name', type=str, required=True, help='first name must be specified')
+        self.parser.add_argument('last_name', type=str, required=True, help='last name must be specified')
+        self.parser.add_argument('image_url', type=str, required=True, help='image URL must be specified')
+        self.parser.add_argument('user_url', type=str, required=True, help='user URL must be specified')
 
     def get(self):
         users = model_dao.get_all_users()
@@ -54,7 +54,7 @@ class UserListView(Resource):
         return users_dict
 
     def post(self):
-        args = parser.parse_args()
+        args = self.parser.parse_args()
         user = model_dao.create_model_from_args(args, 'user')
         user_added_to_db = model_dao.add_user_to_db(user)
         if user_added_to_db:
@@ -64,11 +64,14 @@ class UserListView(Resource):
 
 
 class GroupView(Resource):
-    parser.add_argument('id', type=str, required=True, help='id must be specified')
-    parser.add_argument('first_name', type=str, required=True, help='first name must be specified')
-    parser.add_argument('last_name', type=str, required=True, help='last name must be specified')
-    parser.add_argument('image_url', type=str, required=True, help='image URL must be specified')
-    parser.add_argument('user_url', type=str, required=True, help='user URL must be specified')
+
+    def __init__(self):
+        self.parser = reqparse.RequestParser(bundle_errors=True)
+        self.parser.add_argument('id', type=str, required=True, help='id must be specified')
+        self.parser.add_argument('first_name', type=str, required=True, help='first name must be specified')
+        self.parser.add_argument('last_name', type=str, required=True, help='last name must be specified')
+        self.parser.add_argument('image_url', type=str, required=True, help='image URL must be specified')
+        self.parser.add_argument('user_url', type=str, required=True, help='user URL must be specified')
 
     def get(self, group_id):
         group = model_dao.get_group(group_id)
@@ -80,7 +83,7 @@ class GroupView(Resource):
     def post(self, group_id):
         group = model_dao.get_group(group_id)
         if group:
-            args = parser.parse_args()
+            args = self.parser.parse_args()
             user = model_dao.get_user(args['id'])
             user_added_to_group = model_dao.add_user_to_group(user, group)
             if user_added_to_group:
@@ -92,7 +95,10 @@ class GroupView(Resource):
 
 
 class GroupListView(Resource):
-    parser.add_argument('name', type=str, required=True, help='name must be specified')
+
+    def __init__(self):
+        self.parser = reqparse.RequestParser(bundle_errors=True)
+        self.parser.add_argument('name', type=str, required=True, help='name must be specified')
 
     def get(self):
         groups = model_dao.get_all_groups()
@@ -104,7 +110,7 @@ class GroupListView(Resource):
         return groups_dict
 
     def post(self):
-        args = parser.parse_args()
+        args = self.parser.parse_args()
         group = model_dao.create_model_from_args(args, 'group')
         group_added_to_db = model_dao.add_group_to_db(group)
         if group_added_to_db:

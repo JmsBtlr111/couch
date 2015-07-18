@@ -30,14 +30,14 @@ application.controller('HeaderCtrl', ['$scope', '$window', function ($scope, $wi
 
 application.controller('HomeCtrl', ['$scope', '$window', '$http', '$rootScope', function ($scope, $window, $http, $rootScope ) {
     var userKey = $window.R.currentUser.get('key');
-    console.log(userKey);
 
-    $http.get('/api/user?q={"filters":[{"name":"rdio_key","op":"eq","val":"' + userKey.toString() +'"}]}')
+    $http.get('/api/user/' + userKey.toString())
         .success(function (data) {
-            $rootScope.user = data['objects'][0];
+            $rootScope.user = data;
         })
         .error(function (data, status) {
             alert(status);
+            console.log(data);
         });
 
     $scope.createNewGroup = function (newGroupName) {
@@ -119,7 +119,7 @@ application.controller('LoginCtrl', ['$scope', '$window', '$state', '$http', fun
                 }).success(function () {
                     $state.go('home');
                 }).error(function (data, status) {
-                    if (status == 400) {
+                    if (status == 409) {
                         $state.go('home');
                     }
                 });
