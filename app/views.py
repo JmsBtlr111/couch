@@ -1,6 +1,5 @@
 # coding=utf-8
 """Contains all the logic and routing to handle the displaying of views for the Couch app"""
-from flask import request, Response, json
 from flask_restful import Resource, reqparse
 import redis
 from couch import socketio
@@ -22,7 +21,7 @@ def login():
 @socketio.on('connect', namespace='/group')
 def connect():
     print "Connected yo"
-    emit('info_request', {'data': 'Connected', 'count': 0})
+    #emit('info_request', {'data': 'Connected', 'count': 0})
 
 
 # Called when initial web socket connection is created
