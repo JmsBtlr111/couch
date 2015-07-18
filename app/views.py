@@ -3,7 +3,7 @@
 from flask import request, Response, json
 from flask_restful import Resource, reqparse
 import redis
-from app import socketio
+from couch import socketio
 from flask.ext.socketio import join_room, leave_room, emit
 
 from app import app
@@ -21,11 +21,18 @@ def login():
     return app.send_static_file('index.html')
 
 
+# # Called when initial web socket connection is created
+# @socketio.on('connect', namespace='/group')
+# def test_connect():
+#     print "Connected yo"
+#     emit('my response', {'data': 'Connected', 'count': 0})
+
+
 # Called when initial web socket connection is created
-@socketio.on('connect', namespace='/group')
-def test_connect():
+@socketio.on('connect', namespace='/user')
+def connect():
     print "Connected yo"
-    emit('my response', {'data': 'Connected', 'count': 0})
+    emit('info_request', {'data': 'Connected', 'count': 0})
 
 
 class UserView(Resource):
