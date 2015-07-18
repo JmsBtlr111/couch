@@ -18,18 +18,25 @@ def login():
     return app.send_static_file('index.html')
 
 
-# # Called when initial web socket connection is created
-# @socketio.on('connect', namespace='/group')
-# def test_connect():
-#     print "Connected yo"
-#     emit('my response', {'data': 'Connected', 'count': 0})
-
-
 # Called when initial web socket connection is created
-@socketio.on('connect', namespace='/user')
+@socketio.on('connect', namespace='/group')
 def connect():
     print "Connected yo"
     emit('info_request', {'data': 'Connected', 'count': 0})
+
+
+# Called when initial web socket connection is created
+@socketio.on('info_response', namespace='/group')
+def info_response():
+    print "got response"
+    # emit('info_request', {'data': 'Connected', 'count': 0})
+
+
+# # Called when initial web socket connection is created
+# @socketio.on('connect', namespace='/user')
+# def connect():
+#     print "Connected yo"
+#     emit('info_request', {'data': 'Connected', 'count': 0})
 
 
 class UserView(Resource):
