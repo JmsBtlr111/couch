@@ -7,7 +7,7 @@ from dictalchemy import make_class_dictable
 # from flask.ext.socketio import SocketIO
 from gevent import monkey
 import logging
-#
+
 logging.basicConfig()
 monkey.patch_all()
 
