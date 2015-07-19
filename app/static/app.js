@@ -34,11 +34,6 @@ application.controller('HomeCtrl', ['$scope', '$window', '$http', '$rootScope', 
     $http.get('/api/user/' + userKey.toString())
         .success(function (data) {
             $rootScope.user = data;
-            console.log(data);
-        })
-        .error(function (data, status) {
-            alert(status);
-            console.log(data);
         });
 
     $scope.createNewGroup = function (newGroupName) {
@@ -46,7 +41,6 @@ application.controller('HomeCtrl', ['$scope', '$window', '$http', '$rootScope', 
             'name': newGroupName
         }).success(function (data) {
             $rootScope.user.groups.push(data);
-        }).error(function () {
         });
     };
 }]);
