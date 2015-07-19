@@ -34,10 +34,6 @@ application.controller('HomeCtrl', ['$scope', '$window', '$http', '$rootScope', 
     $http.get('/api/user/' + userKey.toString())
         .success(function (data) {
             $rootScope.user = data;
-        })
-        .error(function (data, status) {
-            alert(status);
-            console.log(data);
         });
 
     $scope.createNewGroup = function (newGroupName) {
@@ -45,29 +41,12 @@ application.controller('HomeCtrl', ['$scope', '$window', '$http', '$rootScope', 
             'name': newGroupName
         }).success(function (data) {
             $rootScope.user.groups.push(data);
-        }).error(function () {
         });
     };
 }]);
 
 application.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$rootScope', function ($scope, $stateParams, $window, $http, $rootScope) {
-    var group = {};
-
-    $http.get('/api/group/' + $stateParams.id)
-        .success(function (data) {
-            group = data;
-        });
-
-    $http.get('/api/user/' + $rootScope.user.id)
-        .success(function (data) {
-            if ((group in data.groups)) {
-                data.groups.push(group);
-                $http.put('/api/user/' + $rootScope.user.id, {
-                    'groups': data.groups
-                });
-            }
-            ;
-        });
+    $http.post('/api/group/' + $stateParams.id, $rootScope.user);
 
     // Disconnect from web-socket when state changes
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
