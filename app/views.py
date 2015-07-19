@@ -28,14 +28,29 @@ def connect(message=None):
     emit('info_request', {'data': 'Connected', 'count': 0})
 
 
-# Called when initial web socket connection is created
+# Called when initial web socket connection is created when user joins a group
 @socketio.on('info_response', namespace='/group')
 def info_response(message):
-    print message['user_id']
     user = model_dao.get_user(str(message['user_id'])).first_name
     group = str(message['group_id'])
     r = redis.Redis(connection_pool=pool)  # Connect to redis server
     join_room(group)  # Get the user to join the socket.io room corresponding to the group they've just joined
+    r.rpush(group + "_listeners", user)  # Add user to redis object representing groups current listeners
+    current_listeners = r.lrange(group + "_listeners", 0, -1)  # Get current listeners
+    current_playlist = r.lrange(group + "_playlist", 0, -1)  # Get current playlist
+    emit('update_current_listeners', {'listeners': current_listeners},
+         room=group)  # Emit web-socket message updating groups current listeners to all current listeners
+    emit('update_current_playlist', {'playlist': current_playlist})  # Send play;ist to new group member
+
+
+# Called when user leaves a group page causing the web-socket to disconnect
+# TODO: To James: This method is incomplete. Currently working on it but is only important if you need to disconnect from a group
+@socketio.on('disconnect_group', namespace='/group')
+def disconnect_group(message):
+    user = model_dao.get_user(str(message['user_id'])).first_name
+    group = str(message['group_id'])
+    r = redis.Redis(connection_pool=pool)  # Connect to redis server
+    leave_room(group)  # Get the user to join the socket.io room corresponding to the group they've just joined
     r.rpush(group + "_listeners", user)  # Add user to redis object representing groups current listeners
     current_listeners = r.lrange(group + "_listeners", 0, -1)  # Get current listeners
     current_playlist = r.lrange(group + "_playlist", 0, -1)  # Get current playlist

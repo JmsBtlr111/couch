@@ -71,8 +71,10 @@ application.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http
 
     // Disconnect from web-socket when state changes
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
-        console.log("toState: " + toState.name.toString() + " fromState: " + fromState.name.toString());
-        socket.disconnect()
+        //console.log("toState: " + toState.name.toString() + " fromState: " + fromState.name.toString());
+        if (fromState.name.toString() == 'group') {
+            socket.emit('disconnect_group', {user_id: $rootScope.user.id, group_id: $stateParams.id});
+        }
     });
 
     var namespace = '/group';
