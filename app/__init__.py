@@ -19,7 +19,7 @@ make_class_dictable(db.Model)
 api = Api(app)
 socketio = SocketIO(app)
 
-from app.views import connect
+from app.views import connect, info_response
 from app.views import UserView, UserListView, GroupView, GroupListView
 
 api.add_resource(views.UserView, '/api/user/<string:user_id>')
