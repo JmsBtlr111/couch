@@ -48,6 +48,10 @@ application.controller('HomeCtrl', ['$scope', '$window', '$http', '$rootScope', 
 application.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$rootScope', function ($scope, $stateParams, $window, $http, $rootScope) {
     $http.post('/api/group/' + $stateParams.id, $rootScope.user);
 
+    $window.R.ready(function () {
+        var search = new metronomik.search('search', 'Track');
+    })
+
     // Disconnect from web-socket when state changes
     $rootScope.$on('$stateChangeStart',function(event, toState, toParams, fromState, fromParams){
         console.log("toState: " + toState.name.toString() + " fromState: " + fromState.name.toString());
@@ -76,8 +80,6 @@ application.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http
     socket.on('playlist', function(msg) {
         console.log(msg.playlist)
     });
-
-    //$window.R.player.play({source: "a3032151"})
 }]);
 
 application.controller('LoginCtrl', ['$scope', '$window', '$state', '$http', function ($scope, $window, $state, $http) {
