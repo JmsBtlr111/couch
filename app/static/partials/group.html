@@ -1,4 +1,19 @@
+<!-- Custom styles for this template -->
+<link href="../custom_css/custom_group.css" rel="stylesheet">
+
 <div class="container">
     <div id="search"></div>
 </div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+           <ul class="nav nav-sidebar">
+                <li ng-repeat="listener in listeners">{{ listener }}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
 <script src="lib/metronomik-search/m-search.js"></script>
+
