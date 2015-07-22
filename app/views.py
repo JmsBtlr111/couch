@@ -74,6 +74,16 @@ def update_listeners(message):
     emit('update_current_listeners', {'listeners': current_listeners}, room=group)
 
 
+@socketio.on('add_to_playlist', namespace=socket_namespace)
+def add_to_playlist(message):
+    track = str(message['track_id'])
+    group = str(message['group_id'])
+    r = redis.Redis(connection_pool=pool)
+    join_room(group)
+    r.rpush(group + "_playlist", track)
+    emit('track_added_to_playlist', message, room=group)
+
+
 class UserView(Resource):
     def get(self, user_id):
         user = model_dao.get_user(user_id)

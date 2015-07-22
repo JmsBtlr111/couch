@@ -54,6 +54,10 @@ application.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http
     $window.R.ready(function () {
         var search = new metronomik.search('search', 'Track');
     });
+    
+    $scope.add_to_playlist = function (key) {
+        $rootScope.$emit(addToPlaylistEvent, key, $stateParams.id);
+    };
 }]);
 
 application.controller('LoginCtrl', ['$scope', '$window', '$state', '$http', function ($scope, $window, $state, $http) {
@@ -162,5 +166,9 @@ application.run(['$rootScope', '$state', '$window', '$stateParams', function ($r
             }
         }
     });
+    
+    $rootScope.$on('addToPlaylistEvent', function (event, key, group_id) {
+        socket.emit('add_to_playlist', {track_id: key, group_id: group_id});
+    })
 }]);
 

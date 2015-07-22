@@ -113,7 +113,20 @@ metronomik.search = function (containerId, types, callback) {
 
                 $listItemTextTrackArtist = jQuery(document.createElement('p'))
                     .text(item.artist)
-                    .appendTo($listItemMediaTextBlock);
+                    .appendTo($listItemMediaTextBlock),
+
+				$listItemMediaButtonBlock = jQuery(document.createElement('div'))
+                    .attr({'class': 'media-right'})
+                    .appendTo($listItem),
+
+                $listItemButton = jQuery(document.createElement('button'))
+                    .attr({
+                        'class': 'btn btn-default',
+                        'type': 'button',
+                        'ng-click': 'add_to_playlist(' + item.key + ')'
+                    })
+                    .text('Add to playlist')
+                    .appendTo($listItemMediaButtonBlock);
 		});
 
 	}
