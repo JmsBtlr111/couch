@@ -53,14 +53,6 @@ application.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http
 
     $window.R.ready(function () {
         var search = new metronomik.search('search', 'Track');
-    })
-
-    // Disconnect from web-socket when state changes
-    $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
-        //console.log("toState: " + toState.name.toString() + " fromState: " + fromState.name.toString());
-        if (fromState.name.toString() == 'group') {
-            socket.emit('disconnect_group', {user_id: $rootScope.user.id, group_id: $stateParams.id});
-        }
     });
 }]);
 
