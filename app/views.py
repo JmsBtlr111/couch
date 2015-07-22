@@ -10,6 +10,7 @@ from models import model_dao
 
 # Create connection to the redis database
 pool = redis.ConnectionPool(host='localhost', port=6379, db=0)
+socket_namespace = '/sockets'
 
 
 @app.route('/')
@@ -21,18 +22,18 @@ def login():
 
 
 # Called when initial web socket connection is created
-@socketio.on('connect', namespace='/group')
+@socketio.on('connect', namespace=socket_namespace)
 def connect(message=None):
     if message:
         return
     print "connection"
-    emit('info_request', {'data': 'Connected', 'count': 0})
+    emit('confirm_connect', {'data': 'Connected', 'count': 0})
 
 
 # Called when initial web socket connection is created when user joins a group
 # TODO: Need to account for duplicate user names
-@socketio.on('info_response', namespace='/group')
-def info_response(message):
+@socketio.on('join_group', namespace=socket_namespace)
+def join_group(message):
     user = model_dao.get_user(str(message['user_id'])).first_name
     group = str(message['group_id'])
     r = redis.Redis(connection_pool=pool)  # Connect to redis server
@@ -44,23 +45,22 @@ def info_response(message):
     current_playlist = r.lrange(group + "_playlist", 0, -1)  # Get current playlist
     emit('update_current_listeners', {'listeners': current_listeners},
          room=group)  # Emit web-socket message updating groups current listeners to all current listeners
-    emit('update_current_playlist', {'playlist': current_playlist})  # Send play;ist to new group member
+    emit('update_current_playlist', {'playlist': current_playlist})  # Send playlist to new group member
 
 
 # Called when user leaves a group page causing the web-socket to disconnect
 # TODO: Need to account for duplicate user names
-@socketio.on('disconnect_group', namespace='/group')
-def disconnect_group(message):
+@socketio.on('leave_group', namespace=socket_namespace)
+def leave_group(message):
     user = model_dao.get_user(str(message['user_id'])).first_name
     group = str(message['group_id'])
     r = redis.Redis(connection_pool=pool)
     leave_room(group)
     r.lrem(group + "_listeners", user)
     current_listeners = r.lrange(group + "_listeners", 0, -1)
-    emit('update_current_listeners', {'listeners': current_listeners},
-         room=group)
+    emit('update_current_listeners', {'listeners': current_listeners}, room=group)
 
-@socketio.on('update_listeners', namespace='/group')
+@socketio.on('update_listeners', namespace=socket_namespace)
 def update_listeners(message):
     # TODO: Send a new playlist to the guy who has reconnected
     user = model_dao.get_user(str(message['user_id'])).first_name
@@ -71,8 +71,7 @@ def update_listeners(message):
     if user not in current_listeners:
         r.rpush(group + "_listeners", user)
         current_listeners = r.lrange(group + "_listeners", 0, -1)
-    emit('update_current_listeners', {'listeners': current_listeners},
-         room=group)
+    emit('update_current_listeners', {'listeners': current_listeners}, room=group)
 
 
 class UserView(Resource):
