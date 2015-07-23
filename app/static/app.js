@@ -139,18 +139,29 @@ application.run(['$rootScope', '$state', '$window', '$http',
 
         $rootScope.$on('$stateChangeStart', function (e, to, toParams, from, fromParams) {
             if (to.data && to.data.requireLogin) {
-                if ($window.R.authenticated()) {
-                    return;
-                } else {
+                if (!$window.R.authenticated()) {
                     e.preventDefault();
                     $state.go('login');
                 }
             }
 
-            if (from.name == 'group') {};
+            if (from.name == 'group') {
+                $http.delete('https://couch.firebaseio.com/group/' + fromParams['id'] + '/listeners/' + $rootScope.user.id + '.json')
+                    .error(function (data) {
+                        console.log(data);
+                    });
+            }
 
             if (to.name == 'group') {
-                console.log(toParams.name);
+                var firebase_user = {};
+                firebase_user[$rootScope.user.id] = {
+                    first_name: $rootScope.user.first_name,
+                    last_name: $rootScope.user.last_name
+                };
+                $http.put('https://couch.firebaseio.com/group/' + toParams['id'] + '/listeners.json', firebase_user)
+                    .error(function (data) {
+                        console.log(data);
+                    });
             }
         });
     }]);
