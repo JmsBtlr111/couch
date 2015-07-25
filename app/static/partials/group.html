@@ -53,6 +53,13 @@
                     </li>
                 </ul>
             </div>
+            <nav class="navbar navbar-default navbar-fixed-bottom">
+                <div class="media">
+                    <div class="media-left">
+                        <img class="media-object" ng-src="http://rdio1img-a.akamaihd.net/album/9/a/3/00000000000173a9/2/square-200.jpg">
+                    </div>
+                </div>
+            </nav>
         </div>
         <div class="col-md-4">
             <div class="panel panel-default">
@@ -61,7 +68,7 @@
                         Playlist
                     </h3>
                 </div>
-                <ul class="list-group">
+                <ul class="media list-group">
                     <li class="list-group-item" ng-repeat="track in playlist">
                         <div class="media-left">
                             <img class="media-object" ng-src="{{ track.icon }}" width="64">

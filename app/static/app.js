@@ -57,6 +57,14 @@ application.factory('RdioSearchFactory', function ($window, $q) {
     return factory;
 });
 
+application.factory('RdioPlayerFactory', function () {
+    var factory = {};
+
+
+
+    return factory;
+});
+
 application.controller('HeaderCtrl', ['$scope', '$window', function ($scope, $window) {
 }]);
 
@@ -102,6 +110,21 @@ application.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http
         $scope.add_to_playlist = function(track) {
             $scope.playlist.$add(track);
         };
+
+        angular.element($window).bind('beforeunload', function () {
+            var request = new XMLHttpRequest();
+            request.open('DELETE',
+                'https://couch.firebaseio.com/group/' + $stateParams.id + '/listeners/' + $rootScope.user.firebase_id + '.json',
+                false);  // `false` makes the request synchronous
+            request.send(null);
+        });
+
+        $scope.$on('$destroy', function () {
+            $http.delete('https://couch.firebaseio.com/group/' + $stateParams.id + '/listeners/' + $rootScope.user.firebase_id + '.json')
+                .error(function (data) {
+                    console.log(data);
+                });
+        });
     }]);
 
 application.controller('LoginCtrl', ['$scope', '$window', '$state', '$http',
@@ -146,10 +169,7 @@ application.run(['$rootScope', '$state', '$window', '$http',
             }
 
             if (from.name == 'group') {
-                $http.delete('https://couch.firebaseio.com/group/' + fromParams['id'] + '/listeners/' + $rootScope.user.firebase_id + '.json')
-                    .error(function (data) {
-                        console.log(data);
-                    });
+                console.log('left group');
             }
 
             if (to.name == 'group') {
