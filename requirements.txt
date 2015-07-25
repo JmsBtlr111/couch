@@ -17,10 +17,6 @@ cryptography==0.9.1
 decorator==3.4.2
 dictalchemy==0.1.2.7
 enum34==1.0.4
-gevent==1.0.2
-gevent-socketio==0.3.6
-gevent-websocket==0.9.5
-greenlet==0.4.7
 httplib2==0.9.1
 idna==2.0
 ipaddress==1.0.7
