@@ -118,13 +118,6 @@ application.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http
                 false);  // `false` makes the request synchronous
             request.send(null);
         });
-
-        $scope.$on('$destroy', function () {
-            $http.delete('https://couch.firebaseio.com/group/' + $stateParams.id + '/listeners/' + $rootScope.user.firebase_id + '.json')
-                .error(function (data) {
-                    console.log(data);
-                });
-        });
     }]);
 
 application.controller('LoginCtrl', ['$scope', '$window', '$state', '$http',
@@ -169,7 +162,10 @@ application.run(['$rootScope', '$state', '$window', '$http',
             }
 
             if (from.name == 'group') {
-                console.log('left group');
+                $http.delete('https://couch.firebaseio.com/group/' + fromParams['id'] + '/listeners/' + $rootScope.user.firebase_id + '.json')
+                .error(function (data) {
+                    console.log(data);
+                });
             }
 
             if (to.name == 'group') {
