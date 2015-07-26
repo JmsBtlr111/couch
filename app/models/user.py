@@ -1,6 +1,5 @@
 # coding=utf-8
 """Contains the user model definition required by the Couch app"""
-import json
 from app import db
 
 
