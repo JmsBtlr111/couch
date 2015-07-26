@@ -10,46 +10,50 @@
                     </h3>
                 </div>
                 <ul class="list-group">
-                    <li class="list-group-item" ng-repeat="listener in listeners">{{ listener['$value'] }}</li>
+                    <li class="list-group-item" ng-repeat="listener in listeners">
+                        {{ listener.first_name }} {{ listener.last_name }}
+                    </li>
                 </ul>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="input-group">
-                <input type="text" class="form-control" ng-model="search_text" placeholder="Search for...">
+            <div class="row">
+                <div class="input-group">
+                    <input type="text" class="form-control" ng-model="search_text" placeholder="Search for...">
                 <span class="input-group-btn">
                     <button class="btn btn-default" type="button" ng-click="search(search_text)">
                         Go!
                     </button>
                 </span>
-            </div>
-            <br>
-            <div class="panel panel-default" ng-show="search_results.length">
-                <div class="panel-heading">
-                    <h3 class="panel-title">
-                        Tracks
-                    </h3>
                 </div>
-                <ul class="media list-group">
-                    <li class="list-group-item" ng-repeat="track in search_results">
-                        <div class="media-left">
-                            <img class="media-object" ng-src="{{ track.icon }}" width="64">
-                        </div>
-                        <div class="media-body media-middle">
-                            <h4 class="media-heading">
-                                {{ track.name }}
-                            </h4>
-                            <p>
-                                {{ track.artist }}
-                            </p>
-                        </div>
-                        <div class="media-right">
-                            <button class="btn btn-default" type="button" ng-click="add_to_playlist(track)">
-                                Add to playlist
-                            </button>
-                        </div>
-                    </li>
-                </ul>
+                <br>
+                <div class="panel panel-default" ng-show="search_results.length">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            Tracks
+                        </h3>
+                    </div>
+                    <ul class="media list-group">
+                        <li class="list-group-item" ng-repeat="track in search_results">
+                            <div class="media-left">
+                                <img class="media-object" ng-src="{{ track.icon }}" width="64">
+                            </div>
+                            <div class="media-body media-middle">
+                                <h4 class="media-heading">
+                                    {{ track.name }}
+                                </h4>
+                                <p>
+                                    {{ track.artist }}
+                                </p>
+                            </div>
+                            <div class="media-right">
+                                <button class="btn btn-default" type="button" ng-click="add_to_playlist(track)">
+                                    Add to playlist
+                                </button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
         <div class="col-md-4">
@@ -59,7 +63,7 @@
                         Playlist
                     </h3>
                 </div>
-                <ul class="list-group">
+                <ul class="media list-group">
                     <li class="list-group-item" ng-repeat="track in playlist">
                         <div class="media-left">
                             <img class="media-object" ng-src="{{ track.icon }}" width="64">
@@ -75,6 +79,30 @@
                     </li>
                 </ul>
             </div>
+        </div>
+    </div>
+    <div id="player-box" class="row">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    Now Playing
+                </h3>
+            </div>
+            <ul class="media list-group">
+                <li class="list-group-item">
+                    <div class="media-left">
+                        <img class="media-object" ng-src="{{ now_playing.icon }}" width="64">
+                    </div>
+                    <div class="media-body media-middle">
+                        <h4 class="media-heading">
+                            {{ now_playing.name }}
+                        </h4>
+                        <p>
+                            {{ now_playing.artist }}
+                        </p>
+                    </div>
+                </li>
+            </ul>
         </div>
     </div>
 </div>

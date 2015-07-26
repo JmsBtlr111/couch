@@ -1,7 +1,7 @@
 <div class="container">
-    <h3>{{ user.first_name }}</h3>
+    <h3>{{ user_first_name }}'s Groups</h3>
     <ul class="list-group">
-        <li class="list-group-item" ng-repeat="group in user.groups">
+        <li class="list-group-item" ng-repeat="group in current_user.groups">
             <a ui-sref="group({id:group.id, group:group.id})">{{ group.name }}</a>
         </li>
     </ul>
