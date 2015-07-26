@@ -1,0 +1,1 @@
+web: gunicorn couch:app --log-file=-
