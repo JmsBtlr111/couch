@@ -73,10 +73,7 @@ app.controller('HeaderCtrl', ['$scope', '$window', function ($scope, $window) {
 }]);
 
 app.controller('HomeCtrl', ['$scope', '$window', '$http', '$rootScope', function ($scope, $window, $http, $rootScope) {
-    var user_key = $rootScope.current_user.id;
-    $scope.user_first_name = $rootScope.current_user.first_name;
-
-    $http.get('/api/user/' + user_key.toString())
+    $http.get('/api/user/' + $rootScope.current_user.id)
         .success(function (data) {
             $rootScope.current_user['groups'] = data['groups'];
         })
@@ -87,8 +84,13 @@ app.controller('HomeCtrl', ['$scope', '$window', '$http', '$rootScope', function
     $scope.createNewGroup = function (new_group_name) {
         $http.post('/api/group', {'name': new_group_name})
             .success(function (data) {
-                // TODO: Post the user to the newly created group
-                $rootScope.current_user.groups.push(data);
+                $http.post('/api/group/' + data['id'], {'id': $rootScope.current_user.id})
+                    .success(function (data) {
+                        $rootScope.current_user.groups.push(data);
+                    })
+                    .error(function (data) {
+                        console.log(data);
+                    })
             })
             .error(function (data) {
                 console.log(data);
@@ -176,10 +178,26 @@ app.controller('LoginCtrl', ['$scope', '$window', '$state', '$http', '$rootScope
                         'user_url': rdio_user['url']
                     };
 
-                    $rootScope.current_user = user;
-                    $http.post('/api/user', user);
-                    $state.go('home');
+                    $http.get('/api/user/' + user.id)
+                        .success(function (data) {
+                            console.log('user_found');
+                            $rootScope.current_user = data;
+                        })
+                        .error(function (data, status) {
+                            console.log(data);
+                            console.log(status);
+                            if (status == 404) {
+                                $http.post('/api/user', user)
+                                    .success(function (data) {
+                                        $rootScope.current_user = data;
+                                    });
+                            }
+                        })
+                        .finally(function () {
+                            $state.go('home');
+                        });
                 } else {
+                    console.log('Not Authenticated');
                     $state.go('login');
                 }
             });
