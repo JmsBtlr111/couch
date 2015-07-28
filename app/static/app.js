@@ -36,7 +36,6 @@ app.factory('RdioSearchFactory', function ($window, $q) {
 
     factory.search = function (search_text) {
         var deferred = $q.defer();
-        console.log('factory searching for:' + search_text);
         setTimeout(function () {
             current_request = $window.R.request({
                 method: 'searchSuggestions',
@@ -46,7 +45,6 @@ app.factory('RdioSearchFactory', function ($window, $q) {
                     extras: '-*,name,artist,key,icon'
                 },
                 success: function (response) {
-                    console.log('success' + response.status);
                     deferred.resolve(response.result);
                 },
                 error: function (response) {
@@ -98,8 +96,15 @@ app.controller('HomeCtrl', ['$scope', '$window', '$http', '$rootScope', function
     };
 }]);
 
-app.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$rootScope', '$firebaseArray', 'RdioSearchFactory',
-    function ($scope, $stateParams, $window, $http, $rootScope, $firebaseArray, RdioSearchFactory) {
+app.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$rootScope', '$firebaseArray', '$firebaseObject', 'RdioSearchFactory',
+    function ($scope, $stateParams, $window, $http, $rootScope, $firebaseArray, $firebaseObject, RdioSearchFactory) {
+        // TODO: Move this call to a state resolve function, if response code is 404 send user to home
+        // Add current user to the current group in our db (expect 409 HTTP response code if user already in group)
+        $http.post('/api/group/' + $stateParams.id, $rootScope.current_user)
+            .error(function (data) {
+                console.log(data);
+            });
+
         var firebase_user = {
             id: $rootScope.current_user.id,
             first_name: $rootScope.current_user.first_name,
@@ -121,10 +126,11 @@ app.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$roo
         var playlist_ref = new Firebase('https://couch.firebaseio.com/group/' + $stateParams.id + '/playlist');
         $scope.playlist = $firebaseArray(playlist_ref);
 
-        $scope.search_results = {};
+        var now_playing_ref = new Firebase('https://couch.firebaseio.com/group/' + $stateParams.id + '/now_playing');
+        var now_playing = $firebaseObject(now_playing_ref);
+        now_playing.$bindTo($scope, 'now_playing');
 
-        // Add current user to the current group in our db (expect 409 HTTP response code if user already in group)
-        $http.post('/api/group/' + $stateParams.id, $rootScope.current_user);
+        $scope.search_results = {};
 
         $scope.search = function (searchText) {
             RdioSearchFactory.search(searchText)
@@ -135,6 +141,8 @@ app.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$roo
                     console.log(data);
                 });
         };
+
+
 
         $scope.add_to_playlist = function(track) {
             $scope.playlist.$add(track);
@@ -154,18 +162,14 @@ app.controller('LoginCtrl', ['$scope', '$window', '$state', '$http', '$rootScope
         $scope.login = function () {
             $window.R.authenticate(function (authenticated) {
                 if (authenticated) {
-                    var rdio_key = $window.R.currentUser.get('key');
-                    var first_name = $window.R.currentUser.get('firstName');
-                    var last_name = $window.R.currentUser.get('lastName');
-                    var image_url = $window.R.currentUser.get('icon');
-                    var user_url = $window.R.currentUser.get('url');
+                    var rdio_user = $window.R.currentUser['attributes'];
 
                     var user = {
-                        'id': rdio_key,
-                        'first_name': first_name,
-                        'last_name': last_name,
-                        'image_url': image_url,
-                        'user_url': user_url
+                        'id': rdio_user['key'],
+                        'first_name': rdio_user['firstName'],
+                        'last_name': rdio_user['lastName'],
+                        'image_url': rdio_user['icon'],
+                        'user_url': rdio_user['url']
                     };
 
                     $rootScope.current_user = user;
