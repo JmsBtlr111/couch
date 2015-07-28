@@ -64,6 +64,7 @@ app.factory('RdioSearchFactory', function ($window, $q) {
 app.factory('RdioPlayerFactory', function ($window) {
     var factory = {};
 
+
     factory.play = function(track) {
         var initial_position = Math.floor(((new Date).getTime() - track.start_time)/1000);
         var config = {'source': track.key, 'initialPosition': initial_position};
@@ -132,42 +133,71 @@ app.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$roo
         var playlist_ref = new Firebase('https://couch.firebaseio.com/group/' + $stateParams.id + '/playlist');
         $scope.playlist = $firebaseArray(playlist_ref);
 
-        $window.R.ready(function () {
-            if ($scope.playlist.length) {
-                RdioPlayerFactory.play($scope.playlist[0]);
-            }
-        });
-
-        $scope.search_results = {};
-
-        $scope.search = function (searchText) {
-            RdioSearchFactory.search(searchText)
-                .then(function (data) {
-                    $scope.search_results = data;
-                })
-                .catch(function (data) {
-                    console.log(data);
+        $scope.playlist.$loaded()
+            .then(function () {
+                console.log($scope.playlist[0]);
+                $window.R.ready(function () {
+                    console.log('window.R.ready');
+                    if ($scope.playlist.length) {
+                        console.log('tracks detected... play song');
+                        RdioPlayerFactory.play($scope.playlist[0]);
+                    }
                 });
-        };
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
 
-        $scope.add_to_playlist = function(track) {
-            if (!$scope.playlist.length) {
-                track.start_time = (new Date).getTime();
-            } else {
-                track.start_time = 0;
+        $scope.playlist.$watch(function (playlist_state) {
+            if (playlist_state.event == 'child_added' && !playlist_state.prevChild) {
+                RdioPlayerFactory.play($scope.playlist.$getRecord(playlist_state.key))
+            } else if (playlist_state.event == 'child_removed') {
+                RdioPlayerFactory.play($scope.playlist.$getRecord(playlist_state.key))
             }
-
-            $scope.playlist.$add(track);
-        };
-
-        angular.element($window).bind('beforeunload', function () {
-            var request = new XMLHttpRequest();
-            request.open('DELETE',
-                'https://couch.firebaseio.com/group/' + $stateParams.id + '/listeners/' + $rootScope.current_user.firebase_id + '.json',
-                false);  // `false` makes the request synchronous
-            request.send(null);
         });
-    }]);
+
+        $window.R.player.on('change:playState', function (new_playstate) {
+            if (new_playstate == $window.R.player.PLAYSTATE_STOPPED) {
+                console.log($window.R.playingTrack);
+                var playing_track = $window.R.playingTrack();
+                if (playing_track['key'] == $scope.playlist[0].id) {
+                    $scope.playlist[1].start_time = (new Date).getTime();
+                    $scope.playlist.$save(1);
+                    $scope.playlist.$remove(0);
+                }
+            }
+        });
+
+$scope.search_results = {};
+
+$scope.search = function (search_text) {
+    RdioSearchFactory.search(search_text)
+        .then(function (data) {
+            $scope.search_results = data;
+        })
+        .catch(function (data) {
+            console.log(data);
+        });
+};
+
+$scope.add_to_playlist = function(track) {
+    if (!$scope.playlist.length) {
+        track.start_time = (new Date).getTime();
+    } else {
+        track.start_time = 0;
+    }
+
+    $scope.playlist.$add(track);
+};
+
+angular.element($window).bind('beforeunload', function () {
+    var request = new XMLHttpRequest();
+    request.open('DELETE',
+        'https://couch.firebaseio.com/group/' + $stateParams.id + '/listeners/' + $rootScope.current_user.firebase_id + '.json',
+        false);  // `false` makes the request synchronous
+    request.send(null);
+});
+}]);
 
 app.controller('LoginCtrl', ['$scope', '$window', '$state', '$http', '$rootScope',
     function ($scope, $window, $state, $http, $rootScope) {
@@ -186,7 +216,6 @@ app.controller('LoginCtrl', ['$scope', '$window', '$state', '$http', '$rootScope
 
                     $http.get('/api/user/' + user.id)
                         .success(function (data) {
-                            console.log('user_found');
                             $rootScope.current_user = data;
                         })
                         .error(function (data, status) {
@@ -203,7 +232,6 @@ app.controller('LoginCtrl', ['$scope', '$window', '$state', '$http', '$rootScope
                             $state.go('home');
                         });
                 } else {
-                    console.log('Not Authenticated');
                     $state.go('login');
                 }
             });
