@@ -99,6 +99,10 @@ app.controller('HomeCtrl', ['$scope', '$window', '$http', '$rootScope', function
 app.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$rootScope', '$firebaseArray', '$firebaseObject', 'RdioSearchFactory',
     function ($scope, $stateParams, $window, $http, $rootScope, $firebaseArray, $firebaseObject, RdioSearchFactory) {
         // TODO: Move this call to a state resolve function, if response code is 404 send user to home
+        console.log($rootScope.current_user);
+        $window.R.ready(function () {
+            console.log($window.R.authenticated());
+        });
         // Add current user to the current group in our db (expect 409 HTTP response code if user already in group)
         $http.post('/api/group/' + $stateParams.id, $rootScope.current_user)
             .error(function (data) {
@@ -190,9 +194,10 @@ app.run(['$rootScope', '$state', '$window', '$http',
             if (require_login && typeof $rootScope.current_user === 'undefined') {
                 event.preventDefault();
                 $state.go('login');
+                return;
             }
 
-            if (from.name == 'group') {
+            if (from.name === 'group') {
                 $http.delete('https://couch.firebaseio.com/group/' + fromParams['id'] + '/listeners/' + $rootScope.current_user.firebase_id + '.json')
                     .error(function (data) {
                         console.log(data);
