@@ -61,10 +61,14 @@ app.factory('RdioSearchFactory', function ($window, $q) {
     return factory;
 });
 
-app.factory('RdioPlayerFactory', function () {
+app.factory('RdioPlayerFactory', function ($window) {
     var factory = {};
 
-
+    factory.play = function(track) {
+        var initial_position = Math.floor(((new Date).getTime() - track.start_time)/1000);
+        var config = {'source': track.key, 'initialPosition': initial_position};
+        $window.R.player.play(config);
+    };
 
     return factory;
 });
@@ -98,13 +102,9 @@ app.controller('HomeCtrl', ['$scope', '$window', '$http', '$rootScope', function
     };
 }]);
 
-app.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$rootScope', '$firebaseArray', '$firebaseObject', 'RdioSearchFactory',
-    function ($scope, $stateParams, $window, $http, $rootScope, $firebaseArray, $firebaseObject, RdioSearchFactory) {
+app.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$rootScope', '$firebaseArray', 'RdioSearchFactory', 'RdioPlayerFactory',
+    function ($scope, $stateParams, $window, $http, $rootScope, $firebaseArray, RdioSearchFactory, RdioPlayerFactory) {
         // TODO: Move this call to a state resolve function, if response code is 404 send user to home
-        console.log($rootScope.current_user);
-        $window.R.ready(function () {
-            console.log($window.R.authenticated());
-        });
         // Add current user to the current group in our db (expect 409 HTTP response code if user already in group)
         $http.post('/api/group/' + $stateParams.id, $rootScope.current_user)
             .error(function (data) {
@@ -132,9 +132,11 @@ app.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$roo
         var playlist_ref = new Firebase('https://couch.firebaseio.com/group/' + $stateParams.id + '/playlist');
         $scope.playlist = $firebaseArray(playlist_ref);
 
-        var now_playing_ref = new Firebase('https://couch.firebaseio.com/group/' + $stateParams.id + '/now_playing');
-        var now_playing = $firebaseObject(now_playing_ref);
-        now_playing.$bindTo($scope, 'now_playing');
+        $window.R.ready(function () {
+            if ($scope.playlist.length) {
+                RdioPlayerFactory.play($scope.playlist[0]);
+            }
+        });
 
         $scope.search_results = {};
 
@@ -148,9 +150,13 @@ app.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$roo
                 });
         };
 
-
-
         $scope.add_to_playlist = function(track) {
+            if (!$scope.playlist.length) {
+                track.start_time = (new Date).getTime();
+            } else {
+                track.start_time = 0;
+            }
+
             $scope.playlist.$add(track);
         };
 
