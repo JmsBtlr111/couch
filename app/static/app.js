@@ -257,7 +257,7 @@ app.controller('LoginCtrl', ['$scope', '$window', '$state', '$http', '$rootScope
         };
     }]);
 
-app.controller('PasswordController', function PasswordController($scope) {
+app.controller('PasswordController', [$scope, function ($scope) {
   $scope.password = '';
   $scope.grade = function() {
     var size = $scope.password.length;
@@ -269,7 +269,7 @@ app.controller('PasswordController', function PasswordController($scope) {
       $scope.strength = 'weak';
     }
   };
-});
+}]);
 
 app.run(['$rootScope', '$state', '$window', '$http',
     function ($rootScope, $state, $window, $http) {
