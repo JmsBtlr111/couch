@@ -61,21 +61,20 @@ app.factory('RdioSearchFactory', function ($window, $q) {
     return factory;
 });
 
-app.factory('RdioPlayerFactory', function ($window) {
+app.factory('RdioPlayerFactory', function ($window, $timeout) {
     var factory = {};
 
     factory.last_track_playing = null;
 
     factory.play = function(track) {
-        console.log('Track Start Time: ' + track.start_time);
         factory.last_track_playing = track;
         var time_since_track_moved_to_top_of_playlist = (new Date).getTime() - track.start_time;
-        var initial_position = Math.floor((time_since_track_moved_to_top_of_playlist)/1000);
-        var config = {'source': track.key, 'initialPosition': initial_position};
+        //var initial_position = Math.floor((time_since_track_moved_to_top_of_playlist)/1000);
+        var config = {'source': track.key};
         console.log('Time Since Track Moved: ' + time_since_track_moved_to_top_of_playlist);
-        console.log('Before Play: ' + (new Date).getTime());
-        $window.R.player.play(config);
-        console.log('After Play: ' + (new Date).getTime());
+        $timeout(function () {
+            $window.R.player.play(config);
+        }, 1000 - time_since_track_moved_to_top_of_playlist);
     };
 
     return factory;
@@ -156,18 +155,14 @@ app.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$roo
             });
 
         $scope.playlist.$watch(function (playlist_state) {
-            console.log('playlist changed');
-            console.log(playlist_state);
             if (playlist_state.event == 'child_added' && !playlist_state.prevChild) {
                 console.log('child added, first_element in playlist');
                 RdioPlayerFactory.play($scope.playlist.$getRecord(playlist_state.key))
             } else if (playlist_state.event == 'child_removed') {
                 console.log('child removed, first_element in playlist');
-                console.log('playlist length: ' + $scope.playlist.length);
                 if ($scope.playlist.length) {
                     var next_track_key = $scope.playlist.$keyAt(0);
                     var next_track = $scope.playlist.$getRecord(next_track_key);
-                    console.log(next_track);
                     RdioPlayerFactory.play(next_track);
                 }
             }
@@ -181,9 +176,7 @@ app.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$roo
                         $scope.playlist[1].start_time = (new Date).getTime();
                         $scope.playlist.$save(1);
                     }
-                    console.log('Before Remove: ' + (new Date).getTime());
                     $scope.playlist.$remove(last_track_playing);
-                    console.log('After Remove: ' + (new Date).getTime());
                 }
             }
         });
