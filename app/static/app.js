@@ -69,9 +69,10 @@ app.factory('RdioPlayerFactory', function ($window) {
     factory.play = function(track) {
         console.log('Track Start Time: ' + track.start_time);
         factory.last_track_playing = track;
-        var initial_position = Math.floor(((new Date).getTime() - track.start_time)/1000);
+        var time_since_track_moved_to_top_of_playlist = (new Date).getTime() - track.start_time;
+        var initial_position = Math.floor((time_since_track_moved_to_top_of_playlist)/1000);
         var config = {'source': track.key, 'initialPosition': initial_position};
-        console.log('Initial Position: ' + initial_position);
+        console.log('Time Since Track Moved: ' + time_since_track_moved_to_top_of_playlist);
         console.log('Before Play: ' + (new Date).getTime());
         $window.R.player.play(config);
         console.log('After Play: ' + (new Date).getTime());
