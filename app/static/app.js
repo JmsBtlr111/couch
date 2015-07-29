@@ -67,10 +67,14 @@ app.factory('RdioPlayerFactory', function ($window) {
     factory.last_track_playing = null;
 
     factory.play = function(track) {
+        console.log('Track Start Time: ' + track.start_time);
+        factory.last_track_playing = track;
         var initial_position = Math.floor(((new Date).getTime() - track.start_time)/1000);
         var config = {'source': track.key, 'initialPosition': initial_position};
-        factory.last_track_playing = track;
+        console.log('Initial Position: ' + initial_position);
+        console.log('Before Play: ' + (new Date).getTime());
         $window.R.player.play(config);
+        console.log('After Play: ' + (new Date).getTime());
     };
 
     return factory;
@@ -171,49 +175,48 @@ app.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$roo
         $window.R.player.on('change:playingTrack', function (playing_track) {
             if (!playing_track) {
                 var last_track_playing = RdioPlayerFactory.last_track_playing;
-                console.log(last_track_playing.$id == $scope.playlist[0].$id);
                 if (last_track_playing && last_track_playing.$id == $scope.playlist[0].$id) {
-                    console.log($scope.playlist.length);
                     if ($scope.playlist.length >= 2) {
                         $scope.playlist[1].start_time = (new Date).getTime();
                         $scope.playlist.$save(1);
-                        console.log($scope.playlist[1]);
                     }
+                    console.log('Before Remove: ' + (new Date).getTime());
                     $scope.playlist.$remove(last_track_playing);
+                    console.log('After Remove: ' + (new Date).getTime());
                 }
             }
         });
 
-$scope.search_results = {};
+        $scope.search_results = {};
 
-$scope.search = function (search_text) {
-    RdioSearchFactory.search(search_text)
-        .then(function (data) {
-            $scope.search_results = data;
-        })
-        .catch(function (data) {
-            console.log(data);
+        $scope.search = function (search_text) {
+            RdioSearchFactory.search(search_text)
+                .then(function (data) {
+                    $scope.search_results = data;
+                })
+                .catch(function (data) {
+                    console.log(data);
+                });
+        };
+
+        $scope.add_to_playlist = function(track) {
+            if (!$scope.playlist.length) {
+                track.start_time = (new Date).getTime();
+            } else {
+                track.start_time = 0;
+            }
+
+            $scope.playlist.$add(track);
+        };
+
+        angular.element($window).bind('beforeunload', function () {
+            var request = new XMLHttpRequest();
+            request.open('DELETE',
+                'https://couch.firebaseio.com/group/' + $stateParams.id + '/listeners/' + $rootScope.current_user.firebase_id + '.json',
+                false);  // `false` makes the request synchronous
+            request.send(null);
         });
-};
-
-$scope.add_to_playlist = function(track) {
-    if (!$scope.playlist.length) {
-        track.start_time = (new Date).getTime();
-    } else {
-        track.start_time = 0;
-    }
-
-    $scope.playlist.$add(track);
-};
-
-angular.element($window).bind('beforeunload', function () {
-    var request = new XMLHttpRequest();
-    request.open('DELETE',
-        'https://couch.firebaseio.com/group/' + $stateParams.id + '/listeners/' + $rootScope.current_user.firebase_id + '.json',
-        false);  // `false` makes the request synchronous
-    request.send(null);
-});
-}]);
+    }]);
 
 app.controller('LoginCtrl', ['$scope', '$window', '$state', '$http', '$rootScope',
     function ($scope, $window, $state, $http, $rootScope) {
