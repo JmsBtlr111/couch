@@ -19,7 +19,6 @@ src_files:
   - app/static/bower_components/firebase/*.js
   - app/static/bower_components/jquery/dist/*.js
   - app/static/*.js
-
 # stylesheets
 #
 # Return an array of stylesheet filepaths relative to src_dir to include before jasmine specs.
@@ -32,7 +31,6 @@ src_files:
 #   - stylesheets/*.css
 #
 stylesheets:
-
 # helpers
 #
 # Return an array of filepaths relative to spec_dir to include before jasmine specs.
