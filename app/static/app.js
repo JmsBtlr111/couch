@@ -42,7 +42,7 @@ app.factory('RdioSearchFactory', function ($window, $q) {
                 content: {
                     query: search_text,
                     types: 'track',
-                    extras: '-*,name,artist,key,icon'
+                    extras: '-*,name,artist,key,icon,duration'
                 },
                 success: function (response) {
                     deferred.resolve(response.result);
@@ -64,10 +64,12 @@ app.factory('RdioSearchFactory', function ($window, $q) {
 app.factory('RdioPlayerFactory', function ($window) {
     var factory = {};
 
+    factory.last_track_playing = null;
 
     factory.play = function(track) {
         var initial_position = Math.floor(((new Date).getTime() - track.start_time)/1000);
         var config = {'source': track.key, 'initialPosition': initial_position};
+        factory.last_track_playing = track;
         $window.R.player.play(config);
     };
 
@@ -108,8 +110,10 @@ app.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$roo
         // TODO: Move this call to a state resolve function, if response code is 404 send user to home
         // Add current user to the current group in our db (expect 409 HTTP response code if user already in group)
         $http.post('/api/group/' + $stateParams.id, $rootScope.current_user)
-            .error(function (data) {
-                console.log(data);
+            .error(function (data, status) {
+                if (status != 409) {
+                    console.log(data);
+                }
             });
 
         var firebase_user = {
@@ -135,9 +139,7 @@ app.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$roo
 
         $scope.playlist.$loaded()
             .then(function () {
-                console.log($scope.playlist[0]);
                 $window.R.ready(function () {
-                    console.log('window.R.ready');
                     if ($scope.playlist.length) {
                         console.log('tracks detected... play song');
                         RdioPlayerFactory.play($scope.playlist[0]);
@@ -149,21 +151,35 @@ app.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$roo
             });
 
         $scope.playlist.$watch(function (playlist_state) {
+            console.log('playlist changed');
+            console.log(playlist_state);
             if (playlist_state.event == 'child_added' && !playlist_state.prevChild) {
+                console.log('child added, first_element in playlist');
                 RdioPlayerFactory.play($scope.playlist.$getRecord(playlist_state.key))
             } else if (playlist_state.event == 'child_removed') {
-                RdioPlayerFactory.play($scope.playlist.$getRecord(playlist_state.key))
+                console.log('child removed, first_element in playlist');
+                console.log('playlist length: ' + $scope.playlist.length);
+                if ($scope.playlist.length) {
+                    var next_track_key = $scope.playlist.$keyAt(0);
+                    var next_track = $scope.playlist.$getRecord(next_track_key);
+                    console.log(next_track);
+                    RdioPlayerFactory.play(next_track);
+                }
             }
         });
 
-        $window.R.player.on('change:playState', function (new_playstate) {
-            if (new_playstate == $window.R.player.PLAYSTATE_STOPPED) {
-                console.log($window.R.playingTrack);
-                var playing_track = $window.R.playingTrack();
-                if (playing_track['key'] == $scope.playlist[0].id) {
-                    $scope.playlist[1].start_time = (new Date).getTime();
-                    $scope.playlist.$save(1);
-                    $scope.playlist.$remove(0);
+        $window.R.player.on('change:playingTrack', function (playing_track) {
+            if (!playing_track) {
+                var last_track_playing = RdioPlayerFactory.last_track_playing;
+                console.log(last_track_playing.$id == $scope.playlist[0].$id);
+                if (last_track_playing && last_track_playing.$id == $scope.playlist[0].$id) {
+                    console.log($scope.playlist.length);
+                    if ($scope.playlist.length >= 2) {
+                        $scope.playlist[1].start_time = (new Date).getTime();
+                        $scope.playlist.$save(1);
+                        console.log($scope.playlist[1]);
+                    }
+                    $scope.playlist.$remove(last_track_playing);
                 }
             }
         });
