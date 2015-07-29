@@ -155,3 +155,6 @@ target/
 
 # Database
 *.db
+
+# Couch
+.env
