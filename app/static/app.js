@@ -1,4 +1,4 @@
-var app = angular.module('application', ['ui.router', 'firebase', 'logglyLogger']);
+var app = angular.module('application', ['ui.router', 'firebase']);
 
 app.config(['$stateProvider', '$urlRouterProvider',
     function ($stateProvider, $urlRouterProvider) {
