@@ -34,7 +34,7 @@
                         </h3>
                     </div>
                     <ul class="media list-group">
-                        <li class="list-group-item" ng-repeat="track in search_results">
+                        <li class="list-group-item" ng-repeat="track in search_results | limitTo:5">
                             <div class="media-left">
                                 <img class="media-object" ng-src="{{ track.icon }}" width="64">
                             </div>
@@ -47,7 +47,7 @@
                                 </p>
                             </div>
                             <div class="media-right">
-                                <button class="btn btn-default" type="button" ng-click="add_to_playlist(track)">
+                                <button class="btn btn-default" type="button" ng-click="addToPlaylist(track)">
                                     Add to playlist
                                 </button>
                             </div>
@@ -91,14 +91,14 @@
             <ul class="media list-group">
                 <li class="list-group-item">
                     <div class="media-left">
-                        <img class="media-object" ng-src="{{ now_playing.icon }}" width="64">
+                        <img class="media-object" ng-src="{{ playlist[0].icon }}" width="64">
                     </div>
                     <div class="media-body media-middle">
                         <h4 class="media-heading">
-                            {{ now_playing.name }}
+                            {{ playlist[0].name }}
                         </h4>
                         <p>
-                            {{ now_playing.artist }}
+                            {{ playlist[0].artist }}
                         </p>
                     </div>
                 </li>

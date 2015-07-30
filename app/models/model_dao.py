@@ -77,3 +77,12 @@ def add_user_to_group(user, group):
         return user
     else:
         return None
+
+
+def remove_user_from_group(user, group):
+    if user in group.users:
+        group.users.remove(user)
+        db.session.commit()
+        return user
+    else:
+        return None
