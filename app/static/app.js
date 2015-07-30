@@ -62,7 +62,7 @@ app.factory('RdioSearchFactory', function ($window, $q) {
     return factory;
 });
 
-app.factory('RdioPlayerFactory', function ($window, $timeout, $log) {
+app.factory('RdioPlayerFactory', function ($window, $timeout) {
     var factory = {};
 
     factory.last_track_playing = null;
@@ -177,6 +177,8 @@ app.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$roo
                     var next_track_key = $scope.playlist.$keyAt(0);
                     var next_track = $scope.playlist.$getRecord(next_track_key);
                     RdioPlayerFactory.play(next_track);
+                } else {
+                    RdioPlayerFactory.last_track_playing = null;
                 }
             }
         });
@@ -184,7 +186,8 @@ app.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$roo
         $window.R.player.on('change:playingTrack', function (playing_track) {
             if (!playing_track) {
                 var last_track_playing = RdioPlayerFactory.last_track_playing;
-                if (last_track_playing && $scope.playlist.length) {
+                if (last_track_playing && $scope.playlist[0]) {
+                    // This condition checks if you are the first to reach the end of the track
                     if (last_track_playing.$id == $scope.playlist[0].$id) {
                         if ($scope.playlist.length >= 2) {
                             $scope.playlist[1].start_time = (new Date).getTime();
@@ -193,6 +196,8 @@ app.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$roo
                         $scope.playlist.$remove(last_track_playing);
                     }
                 }
+            } else {
+                console.log('Track Playing at: ' + (new Date).getTime());
             }
         });
 
