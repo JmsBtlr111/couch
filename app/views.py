@@ -76,6 +76,20 @@ class GroupView(Resource):
         else:
             return {'error': 'group does not exist'}, 404
 
+    def delete(self, group_id):
+        group = model_dao.get_group(group_id)
+        if group:
+            args = self.parser.parse_args()
+            user = model_dao.get_user(args['id'])
+            user_removed_from_group = model_dao.remove_user_from_group(user, group)
+            if user_removed_from_group:
+                print(group.users)
+                return group.asdict(follow={'users': {}})
+            else:
+                return {'error': 'user not in group'}, 404
+        else:
+            return {'error': 'group does not exist'}, 404
+
 
 class GroupListView(Resource):
     def __init__(self):

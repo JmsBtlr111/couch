@@ -1,35 +1,36 @@
-var app = angular.module('application', ['ui.router', 'firebase']);
+var app = angular.module('application', ['ui.router', 'firebase', 'logglyLogger']);
 
-app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
-    $urlRouterProvider
-        .otherwise('/');
+app.config(['$stateProvider', '$urlRouterProvider',
+    function ($stateProvider, $urlRouterProvider) {
+        $urlRouterProvider
+            .otherwise('/');
 
-    $stateProvider
-        .state('home', {
-            url: '/',
-            templateUrl: 'partials/home.html',
-            controller: 'HomeCtrl',
-            data: {
-                require_login: true
-            }
-        })
-        .state('group', {
-            url: '/group/:id',
-            templateUrl: 'partials/group.html',
-            controller: 'GroupCtrl',
-            data: {
-                require_login: true
-            }
-        })
-        .state('login', {
-            url: '/login',
-            templateUrl: 'partials/login.html',
-            controller: 'LoginCtrl',
-            data: {
-                require_login: false
-            }
-        });
-}]);
+        $stateProvider
+            .state('home', {
+                url: '/',
+                templateUrl: 'partials/home.html',
+                controller: 'HomeCtrl',
+                data: {
+                    require_login: true
+                }
+            })
+            .state('group', {
+                url: '/group/:id',
+                templateUrl: 'partials/group.html',
+                controller: 'GroupCtrl',
+                data: {
+                    require_login: true
+                }
+            })
+            .state('login', {
+                url: '/login',
+                templateUrl: 'partials/login.html',
+                controller: 'LoginCtrl',
+                data: {
+                    require_login: false
+                }
+            });
+    }]);
 
 app.factory('RdioSearchFactory', function ($window, $q) {
     var factory = {};
@@ -61,7 +62,7 @@ app.factory('RdioSearchFactory', function ($window, $q) {
     return factory;
 });
 
-app.factory('RdioPlayerFactory', function ($window, $timeout) {
+app.factory('RdioPlayerFactory', function ($window, $timeout, $log) {
     var factory = {};
 
     factory.last_track_playing = null;
@@ -69,11 +70,11 @@ app.factory('RdioPlayerFactory', function ($window, $timeout) {
     factory.play = function(track) {
         factory.last_track_playing = track;
         var time_since_track_moved_to_top_of_playlist = (new Date).getTime() - track.start_time;
-        //var initial_position = Math.floor((time_since_track_moved_to_top_of_playlist)/1000);
-        var config = {'source': track.key};
-        console.log('Time Since Track Moved: ' + time_since_track_moved_to_top_of_playlist);
+        var initial_position = Math.floor((time_since_track_moved_to_top_of_playlist)/1000);
+        var config = {'source': track.key, 'initialPosition': initial_position};
         $timeout(function () {
             $window.R.player.play(config);
+            console.log('Couch plays at: ' + (new Date).getTime())
         }, 1000 - time_since_track_moved_to_top_of_playlist);
     };
 
@@ -107,6 +108,18 @@ app.controller('HomeCtrl', ['$scope', '$window', '$http', '$rootScope', function
                 console.log(data);
             });
     };
+
+    $scope.leaveGroup = function (group_to_leave) {
+        $http.delete('/api/group/' + group_to_leave.id, {params: {id: $rootScope.current_user.id}})
+            .success(function (data) {
+                $rootScope.current_user.groups.pop(data);
+            })
+            .error(function (data, status) {
+                if (status != 404) {
+                    console.log(data);
+                }
+            });
+    }
 }]);
 
 app.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$rootScope', '$firebaseArray', 'RdioSearchFactory', 'RdioPlayerFactory',
@@ -171,12 +184,14 @@ app.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$roo
         $window.R.player.on('change:playingTrack', function (playing_track) {
             if (!playing_track) {
                 var last_track_playing = RdioPlayerFactory.last_track_playing;
-                if (last_track_playing && last_track_playing.$id == $scope.playlist[0].$id) {
-                    if ($scope.playlist.length >= 2) {
-                        $scope.playlist[1].start_time = (new Date).getTime();
-                        $scope.playlist.$save(1);
+                if (last_track_playing && $scope.playlist.length) {
+                    if (last_track_playing.$id == $scope.playlist[0].$id) {
+                        if ($scope.playlist.length >= 2) {
+                            $scope.playlist[1].start_time = (new Date).getTime();
+                            $scope.playlist.$save(1);
+                        }
+                        $scope.playlist.$remove(last_track_playing);
                     }
-                    $scope.playlist.$remove(last_track_playing);
                 }
             }
         });
@@ -193,7 +208,7 @@ app.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$roo
                 });
         };
 
-        $scope.add_to_playlist = function(track) {
+        $scope.addToPlaylist = function(track) {
             if (!$scope.playlist.length) {
                 track.start_time = (new Date).getTime();
             } else {
