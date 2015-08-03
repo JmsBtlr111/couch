@@ -78,6 +78,19 @@ app.factory('RdioPlayerFactory', function ($window, $timeout) {
         }, 1000 - time_since_track_moved_to_top_of_playlist);
     };
 
+    factory.playPausePlay = function(track) {
+        factory.last_track_playing = track;
+        var time_since_track_moved_to_top_of_playlist = (new Date).getTime() - track.start_time;
+        var initial_position = Math.floor((time_since_track_moved_to_top_of_playlist)/1000);
+        var config = {'source': track.key, 'initialPosition': initial_position};
+        $window.R.player.play(config);
+        $window.R.player.pause();
+        $timeout(function () {
+            $window.R.player.play();
+            console.log('Couch plays at: ' + (new Date).getTime())
+        }, 1000 - time_since_track_moved_to_top_of_playlist);
+    };
+
     return factory;
 });
 
