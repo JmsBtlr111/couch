@@ -68,19 +68,20 @@ app.factory('RdioPlayerFactory', function ($window, $timeout) {
     factory.last_track_playing = null;
 
     factory.play = function(track) {
+        console.log(track);
         factory.last_track_playing = track;
-        var time_since_track_moved_to_top_of_playlist = (new Date).getTime() - track.start_time;
+        var time_since_track_moved_to_top_of_playlist = (new Date).getTime() - track.firebase_start_time;
         var initial_position = Math.floor((time_since_track_moved_to_top_of_playlist)/1000);
         var config = {'source': track.key, 'initialPosition': initial_position};
         $timeout(function () {
             $window.R.player.play(config);
-            console.log('Couch plays at: ' + (new Date).getTime())
+            //console.log('Couch plays at: ' + (new Date).getTime())
         }, 1000 - time_since_track_moved_to_top_of_playlist);
     };
 
     factory.playPausePlay = function(track) {
         factory.last_track_playing = track;
-        var time_since_track_moved_to_top_of_playlist = (new Date).getTime() - track.start_time;
+        var time_since_track_moved_to_top_of_playlist = (new Date).getTime() - track.firebase_start_time;
         var initial_position = Math.floor((time_since_track_moved_to_top_of_playlist)/1000);
         var config = {'source': track.key, 'initialPosition': initial_position};
         $window.R.player.play(config);
@@ -186,6 +187,7 @@ app.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$roo
                 RdioPlayerFactory.play($scope.playlist.$getRecord(playlist_state.key))
             } else if (playlist_state.event == 'child_removed') {
                 console.log('child removed, first_element in playlist');
+                logTimeDifference();
                 if ($scope.playlist.length) {
                     var next_track_key = $scope.playlist.$keyAt(0);
                     var next_track = $scope.playlist.$getRecord(next_track_key);
@@ -199,12 +201,15 @@ app.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$roo
         $window.R.player.on('change:playingTrack', function (playing_track) {
             if (!playing_track) {
                 var last_track_playing = RdioPlayerFactory.last_track_playing;
-                if (last_track_playing && $scope.playlist[0]) {
+                // Check that the following variable exist for comparison
+                if (last_track_playing) {
                     // This condition checks if you are the first to reach the end of the track
-                    if (last_track_playing.$id == $scope.playlist[0].$id) {
+                    if (last_track_playing.$id == $scope.playlist.$keyAt(0)) {
                         if ($scope.playlist.length >= 2) {
-                            $scope.playlist[1].start_time = (new Date).getTime();
+                            $scope.playlist[1].firebase_start_time = Firebase.ServerValue.TIMESTAMP;
+                            $scope.playlist[1].client_start_time = (new Date).getTime();
                             $scope.playlist.$save(1);
+                            //console.log((new Date).getTime() - $scope.playlist[1].start_time);
                         }
                         $scope.playlist.$remove(last_track_playing);
                     }
@@ -228,12 +233,22 @@ app.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$roo
 
         $scope.addToPlaylist = function(track) {
             if (!$scope.playlist.length) {
-                track.start_time = (new Date).getTime();
+                track.firebase_start_time = Firebase.ServerValue.TIMESTAMP;
+                track.client_start_time = (new Date).getTime();
             } else {
-                track.start_time = 0;
+                track.firebase_start_time = 0;
+                track.client_start_time = 0;
             }
-
             $scope.playlist.$add(track);
+        };
+
+        var logTimeDifference = function () {
+            var user = $scope.listeners.$getRecord($rootScope.current_user['firebase_id']);
+            user['firebase_time'] = Firebase.ServerValue.TIMESTAMP;
+            user['client_time'] = (new Date).getTime();
+            $scope.listeners.$save(user);
+            var updated_user = $scope.listeners.$getRecord($rootScope.current_user['firebase_id']);
+            console.log(updated_user['firebase_time'] - updated_user['client_time']);
         };
 
         angular.element($window).bind('beforeunload', function () {
