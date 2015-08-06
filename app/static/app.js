@@ -257,19 +257,19 @@ app.controller('LoginCtrl', ['$scope', '$window', '$state', '$http', '$rootScope
         };
     }]);
 
-app.controller('PasswordController', [$scope, function ($scope) {
-  $scope.password = '';
-  $scope.grade = function() {
-    var size = $scope.password.length;
-    if (size > 8) {
-      $scope.strength = 'strong';
-    } else if (size > 3) {
-      $scope.strength = 'medium';
-    } else {
-      $scope.strength = 'weak';
-    }
-  };
-}]);
+//app.controller('PasswordController', [$scope, function ($scope) {
+//  $scope.password = '';
+//  $scope.grade = function() {
+//    var size = $scope.password.length;
+//    if (size > 8) {
+//      $scope.strength = 'strong';
+//    } else if (size > 3) {
+//      $scope.strength = 'medium';
+//    } else {
+//      $scope.strength = 'weak';
+//    }
+//  };
+//}]);
 
 app.run(['$rootScope', '$state', '$window', '$http',
     function ($rootScope, $state, $window, $http) {
