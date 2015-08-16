@@ -67,11 +67,11 @@ app.factory('RdioPlayerFactory', function ($window, $timeout) {
 
     factory.last_track_playing = null;
 
-    factory.play = function(track) {
+    factory.play = function (track) {
         console.log(track);
         factory.last_track_playing = track;
         var time_since_track_moved_to_top_of_playlist = (new Date).getTime() - track.firebase_start_time;
-        var initial_position = Math.floor((time_since_track_moved_to_top_of_playlist)/1000);
+        var initial_position = Math.floor((time_since_track_moved_to_top_of_playlist) / 1000);
         var config = {'source': track.key, 'initialPosition': initial_position};
         $timeout(function () {
             $window.R.player.play(config);
@@ -79,10 +79,10 @@ app.factory('RdioPlayerFactory', function ($window, $timeout) {
         }, 1000 - time_since_track_moved_to_top_of_playlist);
     };
 
-    factory.playPausePlay = function(track) {
+    factory.playPausePlay = function (track) {
         factory.last_track_playing = track;
         var time_since_track_moved_to_top_of_playlist = (new Date).getTime() - track.firebase_start_time;
-        var initial_position = Math.floor((time_since_track_moved_to_top_of_playlist)/1000);
+        var initial_position = Math.floor((time_since_track_moved_to_top_of_playlist) / 1000);
         var config = {'source': track.key, 'initialPosition': initial_position};
         $window.R.player.play(config);
         $window.R.player.pause();
@@ -136,8 +136,8 @@ app.controller('HomeCtrl', ['$scope', '$window', '$http', '$rootScope', function
     }
 }]);
 
-app.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$rootScope', '$firebaseArray', 'RdioSearchFactory', 'RdioPlayerFactory',
-    function ($scope, $stateParams, $window, $http, $rootScope, $firebaseArray, RdioSearchFactory, RdioPlayerFactory) {
+app.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$rootScope', '$firebaseArray', '$firebaseObject', 'RdioSearchFactory', 'RdioPlayerFactory',
+    function ($scope, $stateParams, $window, $http, $rootScope, $firebaseArray, $firebaseObject, RdioSearchFactory, RdioPlayerFactory) {
         // TODO: Move this call to a state resolve function, if response code is 404 send user to home
         // Add current user to the current group in our db (expect 409 HTTP response code if user already in group)
         $http.post('/api/group/' + $stateParams.id, $rootScope.current_user)
@@ -180,6 +180,18 @@ app.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$roo
             .catch(function (error) {
                 console.log(error);
             });
+
+        // Create reference to user object in the firebase.
+        var user_ref = new Firebase('https://couch.firebaseio.com/group/' + $stateParams.id + '/listeners/' + $rootScope.current_user['firebase_id']);
+        $scope.user = $firebaseObject(user_ref);
+
+        // Once user reference is loaded, add a listener function.
+        $scope.user.$loaded().then(function() {
+            $scope.user.$watch(function (user_state) {
+                var round_trip_time = (new Date).getTime() - $rootScope.local_time;
+                console.log("approx latency: " + round_trip_time / 2)
+            });
+        });
 
         $scope.playlist.$watch(function (playlist_state) {
             if (playlist_state.event == 'child_added' && !playlist_state.prevChild) {
@@ -231,7 +243,7 @@ app.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$roo
                 });
         };
 
-        $scope.addToPlaylist = function(track) {
+        $scope.addToPlaylist = function (track) {
             if (!$scope.playlist.length) {
                 track.firebase_start_time = Firebase.ServerValue.TIMESTAMP;
                 track.client_start_time = (new Date).getTime();
@@ -240,6 +252,7 @@ app.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$roo
                 track.client_start_time = 0;
             }
             $scope.playlist.$add(track);
+            logLatency()
         };
 
         var logTimeDifference = function () {
@@ -249,6 +262,12 @@ app.controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$roo
             $scope.listeners.$save(user);
             var updated_user = $scope.listeners.$getRecord($rootScope.current_user['firebase_id']);
             console.log(updated_user['firebase_time'] - updated_user['client_time']);
+        };
+
+        var logLatency = function () {
+            $scope.user['firebase_time'] = Firebase.ServerValue.TIMESTAMP;
+            $scope.user.$save();
+            $rootScope.local_time = (new Date).getTime();
         };
 
         angular.element($window).bind('beforeunload', function () {
