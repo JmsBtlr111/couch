@@ -4,7 +4,7 @@
         <li class="list-group-item" ng-repeat="group in current_user.groups">
             <div class="row">
                 <a ui-sref="group({id:group.id})">{{ group.name }}</a>
-                <button class="btn btn-default pull-right" type="button" ng-click="leaveGroup(group)">
+                <button class="btn btn-danger pull-right" type="button" ng-click="leaveGroup(group)">
                     Leave Group
                 </button>
             </div>
@@ -13,7 +13,7 @@
     <div class="input-group">
         <input ng-model="new_group_name" type="text" class="form-control" placeholder="Enter group name">
         <span class="input-group-btn">
-            <button class="btn btn-default" ng-click="createNewGroup(new_group_name)">Create!</button>
+            <button class="btn btn-success" ng-click="createNewGroup(new_group_name)">Create Group</button>
         </span>
     </div>
 </div>

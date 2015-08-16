@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="application">
+<html lang="en" ng-app="app">
 <head>
     <meta charset="UTF-8">
     <title>Couch</title>
@@ -8,7 +8,7 @@
     <base href="/">
 </head>
 <body>
-<header ng-controller="HeaderCtrl">
+<header>
     <nav class="navbar navbar-default">
         <div class="container">
             <a class="navbar-brand" href="#">
@@ -20,25 +20,15 @@
 
 <div ui-view class="container-fluid"></div>
 
-<!-- JQuery -->
 <script src="bower_components/jquery/dist/jquery.js"></script>
-
-<!-- Bootstrap -->
 <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
-
-<!-- AngularJS -->
 <script src="bower_components/angular/angular.js"></script>
-
-<!-- Angular UI-Router -->
 <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
-
-<!-- Firebase -->
 <script src="bower_components/firebase/firebase.js"></script>
-
-<!-- AngularFire -->
 <script src="bower_components/angularfire/dist/angularfire.js"></script>
-
-<!-- Couch -->
 <script src="app.js"></script>
+<script src="home_view/home_view.js"></script>
+<script src="group_view/group_view.js"></script>
+<script src="login_view/login_view.js"></script>
 </body>
 </html>
