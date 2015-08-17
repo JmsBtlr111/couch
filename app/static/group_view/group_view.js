@@ -60,6 +60,18 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
             }, 1000 - time_since_track_moved_to_top_of_playlist);
         };
 
+        factory.play = function(track) {
+            console.log(track);
+            factory.last_track_playing = track;
+            var time_since_track_moved_to_top_of_playlist = (new Date).getTime() - track.firebase_start_time;
+            var initial_position = Math.floor((time_since_track_moved_to_top_of_playlist)/1000);
+            var config = {'source': track.key, 'initialPosition': initial_position};
+            $timeout(function () {
+                $window.R.player.play(config);
+                //console.log('Couch plays at: ' + (new Date).getTime())
+            }, 1000 - time_since_track_moved_to_top_of_playlist);
+        };
+
         factory.playPausePlay = function(track) {
             factory.last_track_playing = track;
             var time_since_track_moved_to_top_of_playlist = (new Date).getTime() - track.firebase_start_time;
@@ -77,6 +89,8 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
     }).
     controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$rootScope', '$firebaseArray','$firebaseObject', 'RdioSearchFactory', 'RdioPlayerFactory',
         function ($scope, $stateParams, $window, $http, $rootScope, $firebaseArray, $firebaseObject, RdioSearchFactory, RdioPlayerFactory) {
+            var firebase_group_url = 'https://couch.firebaseio.com/group/' + $stateParams.id;
+
             // TODO: Move this call to a state resolve function, if response code is 404 send user to home
             // Add current user to the current group in our db (expect 409 HTTP response code if user already in group)
             $http.post('/api/group/' + $stateParams.id, $rootScope.current_user)
@@ -92,30 +106,28 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                 last_name: $rootScope.current_user.last_name
             };
 
-            // Add current user to firebase as a currently listening user
-            $http.post('https://couch.firebaseio.com/group/' + $stateParams.id + '/listeners.json', firebase_user)
-                .success(function (data) {
-                    $rootScope.current_user['firebase_id'] = data.name;
-                    // Create reference to user object in the firebase.
-                    var user_ref = new Firebase('https://couch.firebaseio.com/group/' + $stateParams.id + '/listeners/' + $rootScope.current_user['firebase_id']);
-                    $scope.user = $firebaseObject(user_ref);
-                    $scope.user.$loaded().then(function() {
-                        $scope.user.$watch(function (user_state) {
-                            console.log("event type: " + user_state.event);
-                            var round_trip_time = (new Date).getTime() - $rootScope.local_time;
-                            console.log("approx latency: " + round_trip_time / 2)
-                        });
-                    });
-                    logLatency()
-                })
-                .error(function (data) {
-                    console.log(data);
-                });
-
-            var listeners_ref = new Firebase('https://couch.firebaseio.com/group/' + $stateParams.id + '/listeners');
+            var listeners_ref = new Firebase(firebase_group_url + '/listeners');
             $scope.listeners = $firebaseArray(listeners_ref);
 
-            var playlist_ref = new Firebase('https://couch.firebaseio.com/group/' + $stateParams.id + '/playlist');
+            $scope.listeners.$loaded()
+                .then(function () {
+                    // Add current user to firebase as a currently listening user
+                    $scope.listeners.$add(firebase_user)
+                        .then(function (user_ref) {
+                            $rootScope.current_user['firebase_id'] = user_ref.key();
+                            $rootScope.local_time = 0;
+                            $scope.user = $firebaseObject(user_ref);
+                            $scope.user.$watch(function () {
+                                var round_trip_time = (new Date).getTime() - $rootScope.local_time;
+                                console.log("approx latency: " + round_trip_time / 2)
+                            });
+                        });
+                })
+                .catch(function (error) {
+                   console.log(error);
+                });
+
+            var playlist_ref = new Firebase(firebase_group_url + '/playlist');
             $scope.playlist = $firebaseArray(playlist_ref);
 
             $scope.playlist.$loaded()
@@ -137,12 +149,11 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                     RdioPlayerFactory.play($scope.playlist.$getRecord(playlist_state.key))
                 } else if (playlist_state.event == 'child_removed') {
                     console.log('child removed, first_element in playlist');
-                    //logTimeDifference();
-                    logLatency();
                     if ($scope.playlist.length) {
                         var next_track_key = $scope.playlist.$keyAt(0);
                         var next_track = $scope.playlist.$getRecord(next_track_key);
                         RdioPlayerFactory.play(next_track);
+                        logLatency();
                     } else {
                         RdioPlayerFactory.last_track_playing = null;
                     }
@@ -193,13 +204,10 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                 $scope.playlist.$add(track);
             };
 
-            var logTimeDifference = function () {
-                var user = $scope.listeners.$getRecord($rootScope.current_user['firebase_id']);
-                user['firebase_time'] = Firebase.ServerValue.TIMESTAMP;
-                user['client_time'] = (new Date).getTime();
-                $scope.listeners.$save(user);
-                var updated_user = $scope.listeners.$getRecord($rootScope.current_user['firebase_id']);
-                console.log(updated_user['firebase_time'] - updated_user['client_time']);
+            var logLatency = function () {
+                $scope.user['firebase_time'] = Firebase.ServerValue.TIMESTAMP;
+                $scope.user.$save()
+                $rootScope.local_time = (new Date).getTime();
             };
 
             var logLatency = function () {
@@ -211,7 +219,7 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
             angular.element($window).bind('beforeunload', function () {
                 var request = new XMLHttpRequest();
                 request.open('DELETE',
-                    'https://couch.firebaseio.com/group/' + $stateParams.id + '/listeners/' + $rootScope.current_user.firebase_id + '.json',
+                    firebase_group_url + '/listeners/' + $rootScope.current_user.firebase_id + '.json',
                     false);  // `false` makes the request synchronous
                 request.send(null);
             });
