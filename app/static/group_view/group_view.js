@@ -46,6 +46,7 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
         var factory = {};
 
         factory.last_track_playing = null;
+        factory.track_end_time = 0;
 
         factory.play = function(track) {
             console.log(track);
@@ -95,6 +96,17 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
             $http.post('https://couch.firebaseio.com/group/' + $stateParams.id + '/listeners.json', firebase_user)
                 .success(function (data) {
                     $rootScope.current_user['firebase_id'] = data.name;
+                    // Create reference to user object in the firebase.
+                    var user_ref = new Firebase('https://couch.firebaseio.com/group/' + $stateParams.id + '/listeners/' + $rootScope.current_user['firebase_id']);
+                    $scope.user = $firebaseObject(user_ref);
+                    $scope.user.$loaded().then(function() {
+                        $scope.user.$watch(function (user_state) {
+                            console.log("event type: " + user_state.event);
+                            var round_trip_time = (new Date).getTime() - $rootScope.local_time;
+                            console.log("approx latency: " + round_trip_time / 2)
+                        });
+                    });
+                    logLatency()
                 })
                 .error(function (data) {
                     console.log(data);
@@ -119,25 +131,14 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                     console.log(error);
                 });
 
-            // Create reference to user object in the firebase.
-            var user_ref = new Firebase('https://couch.firebaseio.com/group/' + $stateParams.id + '/listeners/' + $rootScope.current_user['firebase_id']);
-            $scope.user = $firebaseObject(user_ref);
-
-            // Once user reference is loaded, add a listener function.
-            $scope.user.$loaded().then(function() {
-                $scope.user.$watch(function (user_state) {
-                    var round_trip_time = (new Date).getTime() - $rootScope.local_time;
-                    console.log("approx latency: " + round_trip_time / 2)
-                });
-            });
-
             $scope.playlist.$watch(function (playlist_state) {
                 if (playlist_state.event == 'child_added' && !playlist_state.prevChild) {
                     console.log('child added, first_element in playlist');
                     RdioPlayerFactory.play($scope.playlist.$getRecord(playlist_state.key))
                 } else if (playlist_state.event == 'child_removed') {
                     console.log('child removed, first_element in playlist');
-                    logTimeDifference();
+                    //logTimeDifference();
+                    logLatency();
                     if ($scope.playlist.length) {
                         var next_track_key = $scope.playlist.$keyAt(0);
                         var next_track = $scope.playlist.$getRecord(next_track_key);
@@ -199,6 +200,12 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                 $scope.listeners.$save(user);
                 var updated_user = $scope.listeners.$getRecord($rootScope.current_user['firebase_id']);
                 console.log(updated_user['firebase_time'] - updated_user['client_time']);
+            };
+
+            var logLatency = function () {
+                $scope.user['firebase_time'] = Firebase.ServerValue.TIMESTAMP;
+                $scope.user.$save();
+                $rootScope.local_time = (new Date).getTime();
             };
 
             angular.element($window).bind('beforeunload', function () {
