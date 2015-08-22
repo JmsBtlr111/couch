@@ -23,7 +23,6 @@ angular.module('app.login_view', ['ui.router']).
                             'id': rdio_user['key'],
                             'first_name': rdio_user['firstName'],
                             'last_name': rdio_user['lastName'],
-                            'image_url': rdio_user['icon'],
                             'user_url': rdio_user['url']
                         };
 

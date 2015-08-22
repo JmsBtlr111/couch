@@ -29,7 +29,6 @@ class UserListView(Resource):
         self.parser.add_argument('id', type=str, required=True, help='id must be specified')
         self.parser.add_argument('first_name', type=str, required=True, help='first name must be specified')
         self.parser.add_argument('last_name', type=str, required=True, help='last name must be specified')
-        self.parser.add_argument('image_url', type=str, required=True, help='image URL must be specified')
         self.parser.add_argument('user_url', type=str, required=True, help='user URL must be specified')
 
     def get(self):
