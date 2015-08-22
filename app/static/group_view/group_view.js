@@ -44,19 +44,27 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
     }).
     factory('RdioPlayerFactory', function ($window, $timeout) {
         var factory = {};
+        var TRACK_CHANGE_BUFFER = 4000;
 
         factory.last_track_playing = null;
 
         factory.play = function(track) {
             console.log(track);
             factory.last_track_playing = track;
+            var config = {'source': track.key};
+            $timeout(function () {
+                $window.R.player.play(config);
+            }, TRACK_CHANGE_BUFFER);
+        };
+
+        // Play track from a position offset by a certain amount of time TODO: Test this works
+        factory.play_from_offset = function(track) {
+            console.log(track);
+            factory.last_track_playing = track;
             var time_since_track_moved_to_top_of_playlist = (new Date).getTime() - track.firebase_start_time;
             var initial_position = Math.floor((time_since_track_moved_to_top_of_playlist)/1000);
             var config = {'source': track.key, 'initialPosition': initial_position};
-            $timeout(function () {
-                $window.R.player.play(config);
-                //console.log('Couch plays at: ' + (new Date).getTime())
-            }, 1000 - time_since_track_moved_to_top_of_playlist);
+            $window.R.player.play(config);
         };
 
         factory.playPausePlay = function(track) {
@@ -122,7 +130,7 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                     $window.R.ready(function () {
                         if ($scope.playlist.length) {
                             console.log('tracks detected... play song');
-                            RdioPlayerFactory.play($scope.playlist[0]);
+                            RdioPlayerFactory.play_from_offset($scope.playlist[0]);
                         }
                     });
                 })
@@ -194,6 +202,12 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
             var logLatency = function () {
                 $scope.user['firebase_time'] = Firebase.ServerValue.TIMESTAMP;
                 $scope.user.$save()
+                $rootScope.local_time = (new Date).getTime();
+            };
+
+            var logLatency = function () {
+                $scope.user['firebase_time'] = Firebase.ServerValue.TIMESTAMP;
+                $scope.user.$save();
                 $rootScope.local_time = (new Date).getTime();
             };
 
