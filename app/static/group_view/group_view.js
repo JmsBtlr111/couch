@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('app.group_view', ['ui.router', 'firebase', 'applicationLoggingService']).
+angular.module('app.group_view', ['ui.router', 'firebase', 'talis.services.logging']).
     constant('LOGGING_CONFIG', {
         LOGGING_TYPE: 'remote',
         REMOTE_LOGGING_ENDPOINT: 'couch-music.herokuapp.com/client_logs',
@@ -88,8 +88,8 @@ angular.module('app.group_view', ['ui.router', 'firebase', 'applicationLoggingSe
 
         return factory;
     }).
-    controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$rootScope', '$firebaseArray','$firebaseObject', 'RdioSearchFactory', 'RdioPlayerFactory',
-        function ($scope, $stateParams, $window, $http, $rootScope, $firebaseArray, $firebaseObject, RdioSearchFactory, RdioPlayerFactory) {
+    controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$rootScope', '$firebaseArray','$firebaseObject', 'RdioSearchFactory', 'RdioPlayerFactory', 'applicationLoggingService',
+        function ($scope, $stateParams, $window, $http, $rootScope, $firebaseArray, $firebaseObject, RdioSearchFactory, RdioPlayerFactory, applicationLoggingService) {
             applicationLoggingService.debug({
                 message: 'talis test ok'
             });
