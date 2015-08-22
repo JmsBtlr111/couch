@@ -1,6 +1,12 @@
 'use strict';
 
 angular.module('app.group_view', ['ui.router', 'firebase']).
+    constant('LOGGING_CONFIG', {
+        LOGGING_TYPE: 'remote',
+        REMOTE_LOGGING_ENDPOINT: 'couch-music.herokuapp.com/client_logs',
+        REMOTE_ERROR_REPORT_ENDPOINT: 'couch-music.herokuapp.com/client_error_report',
+        LOGGING_LEVEL: "debug"
+    }).
     config(['$stateProvider',
         function ($stateProvider) {
             $stateProvider.state('group', {
@@ -82,8 +88,12 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
 
         return factory;
     }).
-    controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$rootScope', '$firebaseArray','$firebaseObject', 'RdioSearchFactory', 'RdioPlayerFactory',
-        function ($scope, $stateParams, $window, $http, $rootScope, $firebaseArray, $firebaseObject, RdioSearchFactory, RdioPlayerFactory) {
+    controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$rootScope', '$firebaseArray','$firebaseObject', 'RdioSearchFactory', 'RdioPlayerFactory', 'applicationLoggingService',
+        function ($scope, $stateParams, $window, $http, $rootScope, $firebaseArray, $firebaseObject, RdioSearchFactory, RdioPlayerFactory, applicationLoggingService) {
+            applicationLoggingService.debug({
+                message: 'talis test ok'
+            });
+
             var firebase_group_url = 'https://couch.firebaseio.com/group/' + $stateParams.id;
 
             // TODO: Move this call to a state resolve function, if response code is 404 send user to home
@@ -205,11 +215,6 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                 $rootScope.local_time = (new Date).getTime();
             };
 
-            var logLatency = function () {
-                $scope.user['firebase_time'] = Firebase.ServerValue.TIMESTAMP;
-                $scope.user.$save();
-                $rootScope.local_time = (new Date).getTime();
-            };
 
             angular.element($window).bind('beforeunload', function () {
                 var request = new XMLHttpRequest();
