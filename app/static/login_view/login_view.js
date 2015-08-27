@@ -31,8 +31,6 @@ angular.module('app.login_view', ['ui.router']).
                                 $rootScope.current_user = data;
                             })
                             .error(function (data, status) {
-                                console.log(status);
-                                console.log(status == 404);
                                 if (status == 404) {
                                     $http.post('/api/user', user)
                                         .success(function (data) {

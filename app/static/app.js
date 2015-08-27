@@ -20,7 +20,7 @@ angular.module('app', ['ui.router', 'app.home_view', 'app.group_view', 'app.logi
                 if (from.name === 'group') {
                     $http.delete('https://couch.firebaseio.com/group/' + fromParams['id'] + '/listeners/' + $rootScope.current_user.firebase_id + '.json')
                         .error(function (data) {
-                            console.log(data);
+                            //console.log(data);
                         });
                 }
             });
