@@ -1,6 +1,5 @@
 CherryPy==3.8.0
 Flask==0.10.1
-Flask-API==0.6.3
 Flask-Login==0.2.11
 Flask-RESTful==0.3.3
 Flask-SQLAlchemy==2.0
