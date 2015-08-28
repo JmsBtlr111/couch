@@ -5,6 +5,7 @@ from flask_restful import Resource, reqparse
 from app import app
 from models import model_dao
 from sys import stdout
+from flask import request
 
 
 @app.route('/')
@@ -12,9 +13,11 @@ from sys import stdout
 @app.route('/login')
 def login():
     """Displays the login page"""
-    stdout.write('Stdout')
-    print('Print')
     return app.send_static_file('index.html')
+
+@app.route('/log', methods=['POST'])
+def login():
+    stdout.write(request.data)
 
 
 class UserView(Resource):
