@@ -18,11 +18,8 @@ def login():
 
 @app.route('/log', methods=['POST'])
 def log():
-    stdout.write(request.data)
-    stdout.write(request.args)
-    stdout.write("test")
     print(request.data)
-    print(request.args)
+    print(request)
     print("test_print")
     return ""
 
