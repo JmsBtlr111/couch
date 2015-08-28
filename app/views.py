@@ -19,6 +19,7 @@ def login():
 @app.route('/log', methods=['POST'])
 def log():
     stdout.write(request.data)
+    return
 
 
 class UserView(Resource):
