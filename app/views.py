@@ -20,7 +20,7 @@ def login():
 @app.route('/log', methods=['POST'])
 def log():
     stdout.write(request.data)
-    return status.HTTP_200_OK
+    return {'data': ':)'}, status.HTTP_200_OK
 
 
 class UserView(Resource):
