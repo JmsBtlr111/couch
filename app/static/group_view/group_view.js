@@ -3,8 +3,8 @@
 angular.module('app.group_view', ['ui.router', 'firebase', 'talis.services.logging']).
     constant('LOGGING_CONFIG', {
         LOGGING_TYPE: 'remote',
-        REMOTE_LOGGING_ENDPOINT: 'couch-music.herokuapp.com/client_logs',
-        REMOTE_ERROR_REPORT_ENDPOINT: 'couch-music.herokuapp.com/client_error_report',
+        REMOTE_LOGGING_ENDPOINT: 'couch-music.herokuapp.com/log',
+        REMOTE_ERROR_REPORT_ENDPOINT: 'couch-music.herokuapp.com/error',
         LOGGING_LEVEL: "debug"
     }).
     config(['$stateProvider',
