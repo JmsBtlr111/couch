@@ -18,7 +18,9 @@ def login():
 
 @app.route('/log', methods=['POST'])
 def log():
-    print(request.data)
+    print(request.args)
+    print(request.values)
+    print(request.get_json())
     print(request)
     print("test_print")
     return ""
