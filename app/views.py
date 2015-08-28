@@ -6,6 +6,7 @@ from app import app
 from models import model_dao
 from sys import stdout
 from flask import request
+from flask.ext.api import status
 
 
 @app.route('/')
@@ -19,7 +20,7 @@ def login():
 @app.route('/log', methods=['POST'])
 def log():
     stdout.write(request.data)
-    return
+    return status.HTTP_200_OK
 
 
 class UserView(Resource):
