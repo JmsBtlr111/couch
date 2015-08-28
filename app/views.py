@@ -4,6 +4,7 @@ from flask_restful import Resource, reqparse
 
 from app import app
 from models import model_dao
+from sys import stdout
 
 
 @app.route('/')
@@ -11,6 +12,8 @@ from models import model_dao
 @app.route('/login')
 def login():
     """Displays the login page"""
+    stdout.write('Stdout')
+    print('Print')
     return app.send_static_file('index.html')
 
 

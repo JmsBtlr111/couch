@@ -4,7 +4,7 @@ from flask import Flask
 from flask_restful import Api
 from flask.ext.sqlalchemy import SQLAlchemy
 from dictalchemy import make_class_dictable
-from sys import stdout
+
 
 app = Flask(__name__, static_url_path='')
 app.config.from_object('config')
@@ -19,7 +19,5 @@ api.add_resource(views.UserView, '/api/user/<string:user_id>')
 api.add_resource(views.UserListView, '/api/user')
 api.add_resource(views.GroupView, '/api/group/<int:group_id>')
 api.add_resource(views.GroupListView, '/api/group')
-
-stdout.write('YOYO')
 
 db.create_all()
