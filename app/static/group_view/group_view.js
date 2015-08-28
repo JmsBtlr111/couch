@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('app.group_view', ['ui.router', 'firebase', 'talis.services.logging']).
+angular.module('app.group_view', ['ui.router', 'firebase'/*, 'talis.services.logging'*/]).
     constant('LOGGING_CONFIG', {
         LOGGING_TYPE: 'remote',
         REMOTE_LOGGING_ENDPOINT: 'couch-music.herokuapp.com/log',
@@ -88,12 +88,16 @@ angular.module('app.group_view', ['ui.router', 'firebase', 'talis.services.loggi
 
         return factory;
     }).
-    controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$rootScope', '$firebaseArray','$firebaseObject', 'RdioSearchFactory', 'RdioPlayerFactory', 'applicationLoggingService',
-        function ($scope, $stateParams, $window, $http, $rootScope, $firebaseArray, $firebaseObject, RdioSearchFactory, RdioPlayerFactory, applicationLoggingService) {
-            applicationLoggingService.debug({
-                message: 'talis test ok'
-            });
-
+    controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$rootScope', '$firebaseArray','$firebaseObject', 'RdioSearchFactory', 'RdioPlayerFactory'/*, 'applicationLoggingService'*/,
+        function ($scope, $stateParams, $window, $http, $rootScope, $firebaseArray, $firebaseObject, RdioSearchFactory, RdioPlayerFactory/*, applicationLoggingService*/) {
+            //applicationLoggingService.debug({
+            //    message: 'talis test ok'
+            //});
+            var tattletale = new Tattletale('https://couch-music.herokuapp.com//log');
+            tattletale.log('“My name is Ozymandias, king of kings:');
+            tattletale.log('Look on my works, ye Mighty, and despair!”');
+            tattletale.log(42);
+            tattletale.send();
             var firebase_group_url = 'https://couch.firebaseio.com/group/' + $stateParams.id;
 
             // TODO: Move this call to a state resolve function, if response code is 404 send user to home
@@ -129,7 +133,7 @@ angular.module('app.group_view', ['ui.router', 'firebase', 'talis.services.loggi
                         });
                 })
                 .catch(function (error) {
-                   console.log(error);
+                    console.log(error);
                 });
 
             var playlist_ref = new Firebase(firebase_group_url + '/playlist');
