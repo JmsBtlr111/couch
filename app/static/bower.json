@@ -20,6 +20,7 @@
     "angularfire": "~1.1.2",
     "bootstrap": "~3.3.5",
     "firebase": "~2.2.7",
-    "app-logger-angular": "~1.1.0"
+    "app-logger-angular": "~1.1.0",
+    "stacktrace-js": "~0.6.4"
   }
 }
