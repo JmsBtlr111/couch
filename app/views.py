@@ -15,8 +15,9 @@ def login():
     """Displays the login page"""
     return app.send_static_file('index.html')
 
+
 @app.route('/log', methods=['POST'])
-def login():
+def log():
     stdout.write(request.data)
 
 
