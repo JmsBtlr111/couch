@@ -21,7 +21,7 @@ def log():
     print('1' + str(request.args))
     print('2' + str(request.values))
     print('3' + str(request.get_json()))
-    print('4' + str(request.form))
+    print('4' + str(request.form.copy().to_dict()))
     print("test_print")
     return ""
 
