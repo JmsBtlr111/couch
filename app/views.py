@@ -22,6 +22,7 @@ def log():
     print('2' + str(request.values))
     print('3' + str(request.get_json()))
     print('4' + str(request.form.copy().to_dict()))
+    print('5' + str(request.remote_addr))
     print("test_print")
     return ""
 
