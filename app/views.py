@@ -16,11 +16,14 @@ def login():
     return app.send_static_file('index.html')
 
 
-@app.route('/log', methods=['POST'])
+@app.route('/log', methods=['POST', 'OPTIONS'])
 def log():
-    print('console_logs[0]: ' + str(request.form.copy().to_dict()['console_logs[0]']))
-    print('Remote Address: ' + str(request.remote_addr))
-    return ""
+    if request.method is 'OPTIONS':
+        return ""
+    else:
+        print('console_logs[0]: ' + str(request.form.copy().to_dict()['console_logs[0]']))
+        print('Remote Address: ' + str(request.remote_addr))
+        return ""
 
 
 class UserView(Resource):

@@ -48,9 +48,10 @@ angular.module('app.group_view', ['ui.router', 'firebase'/*, 'talis.services.log
         };
         return factory;
     }).
-    factory('RdioPlayerFactory', function ($window, $timeout) {
+    factory('RdioPlayerFactory', function ($window, $timeout, $rootScope) {
         var factory = {};
         var TRACK_CHANGE_BUFFER = 4000;
+        $rootScope.tattletale = new Tattletale('https://couch-music.herokuapp.com/log');
 
         factory.last_track_playing = null;
 
@@ -60,6 +61,7 @@ angular.module('app.group_view', ['ui.router', 'firebase'/*, 'talis.services.log
             var config = {'source': track.key};
             $timeout(function () {
                 $window.R.player.play(config);
+                $rootScope.tattletale.log((new Date).getTime());
             }, TRACK_CHANGE_BUFFER);
         };
 
@@ -160,7 +162,7 @@ angular.module('app.group_view', ['ui.router', 'firebase'/*, 'talis.services.log
                         var next_track_key = $scope.playlist.$keyAt(0);
                         var next_track = $scope.playlist.$getRecord(next_track_key);
                         RdioPlayerFactory.play(next_track);
-                        logLatency();
+                        //logLatency();
                     } else {
                         RdioPlayerFactory.last_track_playing = null;
                     }
@@ -223,6 +225,7 @@ angular.module('app.group_view', ['ui.router', 'firebase'/*, 'talis.services.log
                 request.open('DELETE',
                     firebase_group_url + '/listeners/' + $rootScope.current_user.firebase_id + '.json',
                     false);  // `false` makes the request synchronous
+                $rootScope.tattletale.send();
                 request.send(null);
             });
         }]);
