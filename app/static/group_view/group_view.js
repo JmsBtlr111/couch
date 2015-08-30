@@ -94,9 +94,7 @@ angular.module('app.group_view', ['ui.router', 'firebase'/*, 'talis.services.log
             //    message: 'talis test ok'
             //});
             var tattletale = new Tattletale('https://couch-music.herokuapp.com/log');
-            tattletale.log('“My name is Ozymandias, king of kings:');
-            tattletale.log('Look on my works, ye Mighty, and despair!”');
-            tattletale.log(42);
+            tattletale.log('My name is Ozymandias, king of kings:');
             tattletale.send();
             var firebase_group_url = 'https://couch.firebaseio.com/group/' + $stateParams.id;
 

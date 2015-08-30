@@ -18,12 +18,8 @@ def login():
 
 @app.route('/log', methods=['POST'])
 def log():
-    print('1' + str(request.args))
-    print('2' + str(request.values))
-    print('3' + str(request.get_json()))
-    print('4' + str(request.form.copy().to_dict()))
-    print('5' + str(request.remote_addr))
-    print("test_print")
+    print('console_logs[0]: ' + str(request.form.copy().to_dict()['console_logs[0]']))
+    print('Remote Address: ' + str(request.remote_addr))
     return ""
 
 
