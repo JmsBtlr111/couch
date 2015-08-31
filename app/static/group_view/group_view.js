@@ -141,11 +141,15 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                 });
 
             $scope.playlist.$watch(function (playlist_state) {
-                if (playlist_state.event == 'child_added' && !playlist_state.prevChild) {
-                    console.log('child added, first_element in playlist');
-                    RdioPlayerFactory.play($scope.playlist.$getRecord(playlist_state.key))
+                if (playlist_state.event == 'child_added'){
+                    if (!playlist_state.prevChild) {
+                        console.log('track added, first_element in playlist');
+                        RdioPlayerFactory.play($scope.playlist.$getRecord(playlist_state.key));
+                    } else {
+                        console.log('track added');
+                    }
                 } else if (playlist_state.event == 'child_removed') {
-                    console.log('child removed, first_element in playlist');
+                    console.log('track removed, first_element in playlist');
                     if ($scope.playlist.length) {
                         var next_track_key = $scope.playlist.$keyAt(0);
                         var next_track = $scope.playlist.$getRecord(next_track_key);
