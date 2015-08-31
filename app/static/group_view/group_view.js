@@ -51,7 +51,7 @@ angular.module('app.group_view', ['ui.router', 'firebase'/*, 'talis.services.log
     factory('RdioPlayerFactory', function ($window, $timeout, $rootScope) {
         var factory = {};
         var TRACK_CHANGE_BUFFER = 4000;
-        //$rootScope.tattletale = new Tattletale('https://couch-music.herokuapp.com/log');
+        $rootScope.tattletale = new Tattletale('https://couch-music.herokuapp.com/log');
 
         factory.last_track_playing = null;
 
@@ -61,7 +61,7 @@ angular.module('app.group_view', ['ui.router', 'firebase'/*, 'talis.services.log
             var config = {'source': track.key};
             $timeout(function () {
                 $window.R.player.play(config);
-                //$rootScope.tattletale.log((new Date).getTime());
+                $rootScope.tattletale.log((new Date).getTime());
             }, TRACK_CHANGE_BUFFER);
         };
 
@@ -215,7 +215,7 @@ angular.module('app.group_view', ['ui.router', 'firebase'/*, 'talis.services.log
 
             var logLatency = function () {
                 $scope.user['firebase_time'] = Firebase.ServerValue.TIMESTAMP;
-                $scope.user.$save();
+                $scope.user.$save()
                 $rootScope.local_time = (new Date).getTime();
             };
 
@@ -225,7 +225,7 @@ angular.module('app.group_view', ['ui.router', 'firebase'/*, 'talis.services.log
                 request.open('DELETE',
                     firebase_group_url + '/listeners/' + $rootScope.current_user.firebase_id + '.json',
                     false);  // `false` makes the request synchronous
-                //$rootScope.tattletale.send();
+                $rootScope.tattletale.send();
                 request.send(null);
             });
         }]);
