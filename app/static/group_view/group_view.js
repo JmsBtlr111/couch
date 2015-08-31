@@ -219,6 +219,9 @@ angular.module('app.group_view', ['ui.router', 'firebase'/*, 'talis.services.log
                 $rootScope.local_time = (new Date).getTime();
             };
 
+            $scope.sendLogs = function() {
+                $rootScope.tattletale.send()
+            };
 
             angular.element($window).bind('beforeunload', function () {
                 var request = new XMLHttpRequest();
