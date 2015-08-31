@@ -154,6 +154,7 @@
             };
 
             request.open('POST', self.url, true);
+            request.setRequestHeader('Origin', 'https://couch-music.herokuapp.com');
             request.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
             request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 

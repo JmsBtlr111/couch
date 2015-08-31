@@ -4,7 +4,6 @@ from flask_restful import Resource, reqparse
 
 from app import app
 from models import model_dao
-from sys import stdout
 from flask import request
 
 
