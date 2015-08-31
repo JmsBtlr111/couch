@@ -20,11 +20,8 @@ def login():
 def log():
     if request.method is 'OPTIONS':
         return ""
-    else:
+    elif request.method is 'POST':
         log_dict = request.form.copy().to_dict()
-        # for key, value in log_dict.items():
-        #     print (key, value)
-        # print('request: ' + request)
         print('console_logs: ' + str(log_dict.get('console_logs[0]')))
         print('Remote Address: ' + str(request.remote_addr))
         return ""

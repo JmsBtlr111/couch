@@ -95,9 +95,9 @@ angular.module('app.group_view', ['ui.router', 'firebase'/*, 'talis.services.log
             //applicationLoggingService.debug({
             //    message: 'talis test ok'
             //});
-            var tattletale = new Tattletale('https://couch-music.herokuapp.com/log');
-            tattletale.log('My name is Ozymandias, king of kings:');
-            tattletale.send();
+            //var tattletale = new Tattletale('https://couch-music.herokuapp.com/log');
+            //tattletale.log('My name is Ozymandias, king of kings:');
+            //tattletale.send();
             var firebase_group_url = 'https://couch.firebaseio.com/group/' + $stateParams.id;
 
             // TODO: Move this call to a state resolve function, if response code is 404 send user to home
