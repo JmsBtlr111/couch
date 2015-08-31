@@ -45,8 +45,6 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
     factory('RdioPlayerFactory', function ($window, $timeout, $rootScope) {
         var factory = {};
         var TRACK_CHANGE_BUFFER = 4000;
-        $rootScope.tattletale = new Tattletale('http://couch-music.herokuapp.com/log');
-        $rootScope.finishedSong = false;
 
         factory.last_track_playing = null;
 
@@ -58,8 +56,7 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                 $rootScope.tattletale.log((new Date).getTime());
                 if($rootScope.finishedSong) {
                     $rootScope.tattletale.log("FINISHED");
-                }
-                else {
+                } else if(factory.last_track_playing) {
                     $rootScope.tattletale.log("UNFINISHED");
                 }
                 factory.last_track_playing = track;
@@ -95,6 +92,8 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
     controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$rootScope', '$firebaseArray','$firebaseObject', 'RdioSearchFactory', 'RdioPlayerFactory'/*, 'applicationLoggingService'*/,
         function ($scope, $stateParams, $window, $http, $rootScope, $firebaseArray, $firebaseObject, RdioSearchFactory, RdioPlayerFactory/*, applicationLoggingService*/) {
             var firebase_group_url = 'https://couch.firebaseio.com/group/' + $stateParams.id;
+            $rootScope.tattletale = new Tattletale('http://couch-music.herokuapp.com/log');
+            $rootScope.finishedSong = false;
 
             // TODO: Move this call to a state resolve function, if response code is 404 send user to home
             // Add current user to the current group in our db (expect 409 HTTP response code if user already in group)
