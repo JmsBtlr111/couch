@@ -46,6 +46,7 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
         var factory = {};
         var TRACK_CHANGE_BUFFER = 4000;
         $rootScope.tattletale = new Tattletale('http://couch-music.herokuapp.com/log');
+        $rootScope.finishedSong = false;
 
         factory.last_track_playing = null;
 
@@ -53,9 +54,16 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
             console.log('playing ' + track.name);
             var config = {'source': track.key};
             $timeout(function () {
+                if($rootScope.finishedSong) {
+                    // LOG SONG FINISHED
+                }
+                else {
+                    // LOG SONG UNFINISHED
+                }
                 $window.R.player.play(config);
                 $rootScope.tattletale.log((new Date).getTime());
                 factory.last_track_playing = track;
+                $rootScope.finishedSong = false;
             }, TRACK_CHANGE_BUFFER);
         };
 
@@ -158,6 +166,7 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                     var last_track_playing = RdioPlayerFactory.last_track_playing;
                     // Check that the following variable exists for comparison
                     if (last_track_playing) {
+                        $rootScope.finishedSong = true;
                         $scope.playlist.$remove(last_track_playing).
                             then(function (ref) {
                                 console.log(ref);
