@@ -51,11 +51,11 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
         factory.last_track_playing = null;
 
         factory.play = function(track) {
-            console.log('playing ' + track.name);
+            $rootScope.tattletale.log('playing ' + track.name);
             var config = {'source': track.key};
             $timeout(function () {
                 $window.R.player.play(config);
-                $rootScope.tattletale.log((new Date).getTime() + " " + factory.last_track_playing.name);
+                $rootScope.tattletale.log((new Date).getTime());
                 if($rootScope.finishedSong) {
                     $rootScope.tattletale.log("FINISHED");
                 }
