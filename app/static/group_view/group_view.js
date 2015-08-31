@@ -167,7 +167,7 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                     if (last_track_playing) {
                         console.log(last_track_playing);
                         $rootScope.finishedSong = true;
-                        if ($scope.$getRecord(last_track_playing)) {
+                        if ($scope.playlist.$getRecord(last_track_playing)) {
                             $scope.playlist.$remove(last_track_playing)
                         }
                     }
