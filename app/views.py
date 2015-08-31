@@ -24,6 +24,7 @@ def log():
         print(str(request.remote_addr))
         for key in log_dict:
             print(str(log_dict.get(key)))
+        print(log_dict)
         return ""
 
 
