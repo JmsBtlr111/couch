@@ -167,6 +167,7 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                             if ($scope.playlist.length >= 2) {
                                 $scope.playlist.$save(1);
                             }
+                            console.log("LAST TRACK PLAYING: " + last_track_playing);
                             $scope.playlist.$remove(last_track_playing);
                         }
                     }
