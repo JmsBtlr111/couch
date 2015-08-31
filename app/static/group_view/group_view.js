@@ -55,7 +55,7 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
             var config = {'source': track.key};
             $timeout(function () {
                 $window.R.player.play(config);
-                $rootScope.tattletale.log((new Date).getTime() + " " + factory.last_track_playing.name());
+                $rootScope.tattletale.log((new Date).getTime() + " " + factory.last_track_playing.name);
                 if($rootScope.finishedSong) {
                     $rootScope.tattletale.log("FINISHED");
                 }
