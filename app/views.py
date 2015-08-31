@@ -24,7 +24,7 @@ def log():
         log_dict = request.form.copy().to_dict()
         # for key, value in log_dict.items():
         #     print (key, value)
-        print('console_logs: ' + str(log_dict['console_logs[0]']))
+        print('console_logs: ' + str(log_dict[request.console_logs[0]]))
         print('Remote Address: ' + str(request.remote_addr))
         return ""
 
