@@ -50,7 +50,7 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
         factory.last_track_playing = null;
 
         factory.play = function(track) {
-            console.log(track);
+            console.log('playing ' + track.name);
             factory.last_track_playing = track;
             var config = {'source': track.key};
             $timeout(function () {
@@ -61,7 +61,7 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
 
         // Play track from a position offset by a certain amount of time TODO: Test this works
         factory.play_from_offset = function(track) {
-            console.log(track);
+            console.log('playing ' + track.name);
             factory.last_track_playing = track;
             var time_since_track_moved_to_top_of_playlist = (new Date).getTime() - track.firebase_start_time;
             var initial_position = Math.floor((time_since_track_moved_to_top_of_playlist)/1000);
@@ -112,12 +112,6 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                     $scope.listeners.$add(firebase_user)
                         .then(function (user_ref) {
                             $rootScope.current_user['firebase_id'] = user_ref.key();
-                            $rootScope.local_time = 0;
-                            $scope.user = $firebaseObject(user_ref);
-                            $scope.user.$watch(function () {
-                                var round_trip_time = (new Date).getTime() - $rootScope.local_time;
-                                console.log("approx latency: " + round_trip_time / 2)
-                            });
                         });
                 })
                 .catch(function (error) {
@@ -131,7 +125,6 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                 .then(function () {
                     $window.R.ready(function () {
                         if ($scope.playlist.length) {
-                            console.log('tracks detected... play song');
                             RdioPlayerFactory.play_from_offset($scope.playlist[0]);
                         }
                     });
@@ -141,11 +134,15 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                 });
 
             $scope.playlist.$watch(function (playlist_state) {
-                if (playlist_state.event == 'child_added' && !playlist_state.prevChild) {
-                    console.log('child added, first_element in playlist');
-                    RdioPlayerFactory.play($scope.playlist.$getRecord(playlist_state.key))
+                if (playlist_state.event == 'child_added'){
+                    if (!playlist_state.prevChild) {
+                        console.log('track added, first_element in playlist');
+                        RdioPlayerFactory.play($scope.playlist.$getRecord(playlist_state.key));
+                    } else {
+                        console.log('track added');
+                    }
                 } else if (playlist_state.event == 'child_removed') {
-                    console.log('child removed, first_element in playlist');
+                    console.log('track removed, first_element in playlist');
                     if ($scope.playlist.length) {
                         var next_track_key = $scope.playlist.$keyAt(0);
                         var next_track = $scope.playlist.$getRecord(next_track_key);
@@ -162,17 +159,14 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                     // Check that the following variable exists for comparison
                     if (last_track_playing) {
                         // This condition checks if you are the first to reach the end of the track
-                        console.log(last_track_playing);
                         if (last_track_playing.$id == $scope.playlist.$keyAt(0)) {
                             if ($scope.playlist.length >= 2) {
-                                $scope.playlist.$save(1);
                             }
                             console.log("LAST TRACK PLAYING: " + last_track_playing);
                             $scope.playlist.$remove(last_track_playing);
+                            console.log('I have removed ' + last_track_playing.name + ' from the playlist');
                         }
                     }
-                } else {
-                    console.log('Track Playing at: ' + (new Date).getTime());
                 }
             });
 
