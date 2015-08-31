@@ -51,11 +51,11 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
 
         factory.play = function(track) {
             console.log('playing ' + track.name);
-            factory.last_track_playing = track;
             var config = {'source': track.key};
             $timeout(function () {
                 $window.R.player.play(config);
                 $rootScope.tattletale.log((new Date).getTime());
+                factory.last_track_playing = track;
             }, TRACK_CHANGE_BUFFER);
         };
 
@@ -160,8 +160,6 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                     if (last_track_playing) {
                         // This condition checks if you are the first to reach the end of the track
                         if (last_track_playing.$id == $scope.playlist.$keyAt(0)) {
-                            if ($scope.playlist.length >= 2) {
-                            }
                             console.log("LAST TRACK PLAYING: " + last_track_playing);
                             $scope.playlist.$remove(last_track_playing);
                             console.log('I have removed ' + last_track_playing.name + ' from the playlist');
