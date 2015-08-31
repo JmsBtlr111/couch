@@ -159,11 +159,8 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                     // Check that the following variable exists for comparison
                     if (last_track_playing) {
                         $scope.playlist.$remove(last_track_playing).
-                            success(function (data) {
-                                console.log('I have removed a track from the playlist with an ID of: ' + last_track_playing.$id);
-                            }).
-                            error(function (data) {
-                                console.log('Someone else has already removed the last track from the playlist');
+                            then(function (ref) {
+                                console.log(ref);
                             });
                     }
                 }
