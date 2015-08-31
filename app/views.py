@@ -23,7 +23,7 @@ def log():
         log_dict = request.form.copy().to_dict()
         print(str(request.remote_addr))
         for x in range(0, len(log_dict)):
-            print(str(log_dict.get('console_logs[' + x + ']')))
+            print(str(log_dict.get('console_logs[' + str(x) + ']')))
         print(log_dict)
         return ""
 
