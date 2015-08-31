@@ -21,7 +21,7 @@ def log():
     if request.method is 'OPTIONS':
         return ""
     else:
-        print('console_logs[0]: ' + str(request.form.copy().to_dict()))
+        print('console_logs: ' + str(request.form.copy().to_dict()))
         print('Remote Address: ' + str(request.remote_addr))
         return ""
 
