@@ -157,6 +157,7 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
             });
 
             $window.R.player.on('change:playingTrack', function (playing_track) {
+                console.log(playing_track);
                 if (!playing_track) {
                     var last_track_playing = RdioPlayerFactory.last_track_playing;
                     // Check that the following variable exists for comparison
