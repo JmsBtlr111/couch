@@ -56,8 +56,7 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                 $rootScope.tattletale.log((new Date).getTime());
                 if($rootScope.finishedSong) {
                     $rootScope.tattletale.log("FINISHED");
-                }
-                else {
+                } else if(factory.last_track_playing) {
                     $rootScope.tattletale.log("UNFINISHED");
                 }
                 factory.last_track_playing = track;
