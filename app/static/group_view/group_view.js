@@ -208,7 +208,6 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                 request.open('DELETE',
                     firebase_group_url + '/listeners/' + $rootScope.current_user.firebase_id + '.json',
                     false);  // `false` makes the request synchronous
-                $rootScope.tattletale.send();
                 request.send(null);
             });
         }]);
