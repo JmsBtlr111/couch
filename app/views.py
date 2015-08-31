@@ -18,13 +18,13 @@ def login():
 
 @app.route('/log', methods=['POST', 'OPTIONS'])
 def log():
-    if request.method is 'OPTIONS':
-        return ""
-    elif request.method is 'POST':
+    if request.method == 'OPTIONS':
+        return {'Allow': 'POST'}, 200, {'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST'}
+    elif request.method == 'POST':
         log_dict = request.form.copy().to_dict()
         print('console_logs: ' + str(log_dict.get('console_logs[0]')))
         print('Remote Address: ' + str(request.remote_addr))
-        return ""
+        return "", 200, {'Access-Control-Allow-Origin': '*'}
 
 
 class UserView(Resource):
