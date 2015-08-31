@@ -170,7 +170,6 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                         console.log(last_track_playing);
                         if (last_track_playing.$id == $scope.playlist.$keyAt(0)) {
                             if ($scope.playlist.length >= 2) {
-                                $scope.playlist.$save(1);
                             }
                             $scope.playlist.$remove(last_track_playing);
                         }
