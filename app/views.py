@@ -4,8 +4,8 @@ from flask_restful import Resource, reqparse
 
 from app import app
 from models import model_dao
-from sys import stdout
 from flask import request
+from app import mail
 
 
 @app.route('/')
@@ -21,9 +21,14 @@ def log():
     if request.method == 'OPTIONS':
         return ""
     elif request.method == 'POST':
+        f = open(str(request.remote_addr)+".txt", 'wb')
         log_dict = request.form.copy().to_dict()
-        print('console_logs: ' + str(log_dict.get('console_logs[0]')))
-        print('Remote Address: ' + str(request.remote_addr))
+        for key in log_dict.key():
+            f.write(str(log_dict[key] + '\n'))
+        msg = mail.Message('hey', sender="hbat205@gmail.com",
+                      recipient='hbat205@aucklanduni.ac.nz')
+        msg.attach(filename=str(request.remote_addr)+".txt", content_type="text/plain", data=f.read())
+        mail.send(msg)
         return ""
 
 

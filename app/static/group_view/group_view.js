@@ -45,7 +45,7 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
     factory('RdioPlayerFactory', function ($window, $timeout, $rootScope) {
         var factory = {};
         var TRACK_CHANGE_BUFFER = 4000;
-        $rootScope.tattletale = new Tattletale('https://couch-music.herokuapp.com/log');
+        $rootScope.tattletale = new Tattletale('http://127.0.0.1:5000/log');
 
         factory.last_track_playing = null;
 

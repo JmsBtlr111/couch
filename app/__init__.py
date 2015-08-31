@@ -13,6 +13,21 @@ db = SQLAlchemy(app)
 make_class_dictable(db.Model)
 api = Api(app)
 
+from flask_mail import Mail
+
+app.config.update(
+    DEBUG=True,  # EMAIL SETTINGS
+    MAIL_SERVER='smtp.gmail.com',
+    MAIL_PORT=587,
+    MAIL_USE_SSL=False,
+    MAIL_USE_TLS=True,
+    MAIL_USERNAME='hbat205@gmail.com',
+    MAIL_PASSWORD='Singapore34'
+)
+
+mail = Mail()
+mail.init_app(app)
+
 from app.views import UserView, UserListView, GroupView, GroupListView
 
 api.add_resource(views.UserView, '/api/user/<string:user_id>')
