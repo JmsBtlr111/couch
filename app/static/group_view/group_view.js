@@ -158,11 +158,13 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                     var last_track_playing = RdioPlayerFactory.last_track_playing;
                     // Check that the following variable exists for comparison
                     if (last_track_playing) {
-                        // This condition checks if you are the first to reach the end of the track
-                        if (last_track_playing.$id == $scope.playlist.$keyAt(0)) {
-                            $scope.playlist.$remove(last_track_playing);
-                            console.log('I have removed a track from the playlist with an ID of: ' + last_track_playing.$id);
-                        }
+                        $scope.playlist.$remove(last_track_playing).
+                            success(function (data) {
+                                console.log('I have removed a track from the playlist with an ID of: ' + last_track_playing.$id);
+                            }).
+                            error(function (data) {
+                                console.log('Someone else has already removed the last track from the playlist');
+                            });
                     }
                 }
             });
