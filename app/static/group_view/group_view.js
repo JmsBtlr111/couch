@@ -159,13 +159,12 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
             $window.R.player.on('change:playingTrack', function (playing_track) {
                 if (!playing_track) {
                     var last_track_playing = RdioPlayerFactory.last_track_playing;
-                    // Check that the following variable exist for comparison
+                    // Check that the following variable exists for comparison
                     if (last_track_playing) {
                         // This condition checks if you are the first to reach the end of the track
+                        console.log(last_track_playing);
                         if (last_track_playing.$id == $scope.playlist.$keyAt(0)) {
                             if ($scope.playlist.length >= 2) {
-                                $scope.playlist[1].firebase_start_time = Firebase.ServerValue.TIMESTAMP;
-                                $scope.playlist[1].client_start_time = (new Date).getTime();
                                 $scope.playlist.$save(1);
                             }
                             $scope.playlist.$remove(last_track_playing);
@@ -189,13 +188,6 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
             };
 
             $scope.addToPlaylist = function(track) {
-                if (!$scope.playlist.length) {
-                    track.firebase_start_time = Firebase.ServerValue.TIMESTAMP;
-                    track.client_start_time = (new Date).getTime();
-                } else {
-                    track.firebase_start_time = 0;
-                    track.client_start_time = 0;
-                }
                 $scope.playlist.$add(track);
             };
 
