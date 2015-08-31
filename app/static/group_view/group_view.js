@@ -1,12 +1,6 @@
 'use strict';
 
-angular.module('app.group_view', ['ui.router', 'firebase'/*, 'talis.services.logging'*/]).
-    constant('LOGGING_CONFIG', {
-        LOGGING_TYPE: 'remote',
-        REMOTE_LOGGING_ENDPOINT: 'couch-music.herokuapp.com/log',
-        REMOTE_ERROR_REPORT_ENDPOINT: 'couch-music.herokuapp.com/error',
-        LOGGING_LEVEL: "debug"
-    }).
+angular.module('app.group_view', ['ui.router', 'firebase']).
     config(['$stateProvider',
         function ($stateProvider) {
             $stateProvider.state('group', {
@@ -92,12 +86,6 @@ angular.module('app.group_view', ['ui.router', 'firebase'/*, 'talis.services.log
     }).
     controller('GroupCtrl', ['$scope', '$stateParams', '$window', '$http', '$rootScope', '$firebaseArray','$firebaseObject', 'RdioSearchFactory', 'RdioPlayerFactory'/*, 'applicationLoggingService'*/,
         function ($scope, $stateParams, $window, $http, $rootScope, $firebaseArray, $firebaseObject, RdioSearchFactory, RdioPlayerFactory/*, applicationLoggingService*/) {
-            //applicationLoggingService.debug({
-            //    message: 'talis test ok'
-            //});
-            //var tattletale = new Tattletale('https://couch-music.herokuapp.com/log');
-            //tattletale.log('My name is Ozymandias, king of kings:');
-            //tattletale.send();
             var firebase_group_url = 'https://couch.firebaseio.com/group/' + $stateParams.id;
 
             // TODO: Move this call to a state resolve function, if response code is 404 send user to home
@@ -162,7 +150,6 @@ angular.module('app.group_view', ['ui.router', 'firebase'/*, 'talis.services.log
                         var next_track_key = $scope.playlist.$keyAt(0);
                         var next_track = $scope.playlist.$getRecord(next_track_key);
                         RdioPlayerFactory.play(next_track);
-                        //logLatency();
                     } else {
                         RdioPlayerFactory.last_track_playing = null;
                     }
@@ -180,7 +167,6 @@ angular.module('app.group_view', ['ui.router', 'firebase'/*, 'talis.services.log
                                 $scope.playlist[1].firebase_start_time = Firebase.ServerValue.TIMESTAMP;
                                 $scope.playlist[1].client_start_time = (new Date).getTime();
                                 $scope.playlist.$save(1);
-                                //console.log((new Date).getTime() - $scope.playlist[1].start_time);
                             }
                             $scope.playlist.$remove(last_track_playing);
                         }
@@ -212,13 +198,6 @@ angular.module('app.group_view', ['ui.router', 'firebase'/*, 'talis.services.log
                 }
                 $scope.playlist.$add(track);
             };
-
-            var logLatency = function () {
-                $scope.user['firebase_time'] = Firebase.ServerValue.TIMESTAMP;
-                $scope.user.$save()
-                $rootScope.local_time = (new Date).getTime();
-            };
-
 
             angular.element($window).bind('beforeunload', function () {
                 var request = new XMLHttpRequest();
