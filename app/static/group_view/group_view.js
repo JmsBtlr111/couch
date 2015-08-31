@@ -160,9 +160,8 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                     if (last_track_playing) {
                         // This condition checks if you are the first to reach the end of the track
                         if (last_track_playing.$id == $scope.playlist.$keyAt(0)) {
-                            console.log("LAST TRACK PLAYING: " + last_track_playing);
                             $scope.playlist.$remove(last_track_playing);
-                            console.log('I have removed ' + last_track_playing.name + ' from the playlist');
+                            console.log('I have removed a track from the playlist with an ID of: ' + last_track_playing.$id);
                         }
                     }
                 }
