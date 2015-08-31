@@ -54,14 +54,14 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
             console.log('playing ' + track.name);
             var config = {'source': track.key};
             $timeout(function () {
+                $window.R.player.play(config);
+                $rootScope.tattletale.log((new Date).getTime() + " " + factory.last_track_playing.name());
                 if($rootScope.finishedSong) {
-                    // LOG SONG FINISHED
+                    $rootScope.tattletale.log("FINISHED");
                 }
                 else {
-                    // LOG SONG UNFINISHED
+                    $rootScope.tattletale.log("UNFINISHED");
                 }
-                $window.R.player.play(config);
-                $rootScope.tattletale.log((new Date).getTime());
                 factory.last_track_playing = track;
                 $rootScope.finishedSong = false;
             }, TRACK_CHANGE_BUFFER);
