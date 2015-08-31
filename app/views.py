@@ -18,9 +18,9 @@ def login():
 
 @app.route('/log', methods=['POST', 'OPTIONS'])
 def log():
-    if request.method is 'OPTIONS':
+    if request.method == 'OPTIONS':
         return ""
-    elif request.method is 'POST':
+    elif request.method == 'POST':
         log_dict = request.form.copy().to_dict()
         print('console_logs: ' + str(log_dict.get('console_logs[0]')))
         print('Remote Address: ' + str(request.remote_addr))
