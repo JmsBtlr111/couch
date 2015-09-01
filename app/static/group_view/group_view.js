@@ -141,10 +141,12 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                 });
 
             $scope.playlist.$watch(function (playlist_state) {
+                var next_track = null;
                 if (playlist_state.event == 'child_added'){
                     if (!playlist_state.prevChild) {
                         console.log('track added, first_element in playlist');
-                        RdioPlayerFactory.play($scope.playlist.$getRecord(playlist_state.key));
+                        next_track = $scope.playlist.$getRecord(playlist_state.key);
+                        RdioPlayerFactory.play(next_track);
                     } else {
                         console.log('track added');
                     }
@@ -152,7 +154,7 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                     console.log('track removed, first_element in playlist');
                     if ($scope.playlist.length) {
                         var next_track_key = $scope.playlist.$keyAt(0);
-                        var next_track = $scope.playlist.$getRecord(next_track_key);
+                        next_track = $scope.playlist.$getRecord(next_track_key);
                         RdioPlayerFactory.play(next_track);
                     } else {
                         RdioPlayerFactory.last_track_playing = null;
@@ -167,9 +169,8 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                     if (last_track_playing) {
                         console.log(last_track_playing);
                         $rootScope.finishedSong = true;
-                        if ($scope.playlist.$getRecord(last_track_playing)) {
-                            $scope.playlist.$remove(last_track_playing)
-                        }
+                        $scope.playlist.$remove(last_track_playing);
+                        console.log($scope.playlist[0]);
                     }
                 }
             });
