@@ -56,9 +56,9 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                 $window.R.player.play(config);
                 $rootScope.tattletale.log('play_time: ' + (new Date).getTime());
                 if($rootScope.finishedSong) {
-                    $rootScope.tattletale.log('finished: True');
+                    $rootScope.tattletale.log('previous_track_finished: True');
                 } else if(factory.last_track_playing) {
-                    $rootScope.tattletale.log('finished: False');
+                    $rootScope.tattletale.log('previous_track_finished: False');
                 }
                 factory.last_track_playing = track;
                 $rootScope.finishedSong = false;
