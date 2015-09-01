@@ -49,15 +49,16 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
         factory.last_track_playing = null;
 
         factory.play = function(track) {
-            $rootScope.tattletale.log('playing ' + track.name);
             var config = {'source': track.key};
             $timeout(function () {
+                $rootScope.tattletale.log('track_key: ' + track.key);
+                $rootScope.tattletale.log('track_duration: ' + track.duration);
                 $window.R.player.play(config);
-                $rootScope.tattletale.log((new Date).getTime());
+                $rootScope.tattletale.log('play_time: ' + (new Date).getTime());
                 if($rootScope.finishedSong) {
-                    $rootScope.tattletale.log("FINISHED");
+                    $rootScope.tattletale.log('finished: True');
                 } else if(factory.last_track_playing) {
-                    $rootScope.tattletale.log("UNFINISHED");
+                    $rootScope.tattletale.log('finished: False');
                 }
                 factory.last_track_playing = track;
                 $rootScope.finishedSong = false;
@@ -151,6 +152,7 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                         console.log('track added');
                     }
                 } else if (playlist_state.event == 'child_removed') {
+                    console.log(playlist_state);
                     console.log('track removed, first_element in playlist');
                     if ($scope.playlist.length) {
                         var next_track_key = $scope.playlist.$keyAt(0);
@@ -168,13 +170,7 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                     // Check that the following variable exists for comparison
                     if (last_track_playing) {
                         $rootScope.finishedSong = true;
-                        $scope.playlist.$remove(last_track_playing).
-                            then(function () {
-                                if (!$scope.playlist[0].firebase_start_time) {
-                                    $scope.playlist[0].firebase_start_time = Firebase.ServerValue.TIMESTAMP;
-                                    $scope.playlist.$save(0);
-                                }
-                            })
+                        $scope.playlist.$remove(last_track_playing);
                     }
                 }
             });
