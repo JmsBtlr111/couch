@@ -62,6 +62,7 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                 }
                 factory.last_track_playing = track;
                 $rootScope.finishedSong = false;
+                $rootScope.tattletale.log('track_change_buffer_size: ' + TRACK_CHANGE_BUFFER);
             }, TRACK_CHANGE_BUFFER);
         };
 
