@@ -21,9 +21,11 @@ def log():
         return ""
     elif request.method == 'POST':
         log_dict = request.form.copy().to_dict()
-        print(str(request.remote_addr))
+        log_statement = ''
+        log_statement += str(request.remote_addr) + ', '
         for x in range(0, len(log_dict)):
-            print(str(log_dict.get('console_logs[' + str(x) + ']')))
+            log_statement += str(log_dict.get('console_logs[' + str(x) + ']')) + ', '
+        print(log_statement)
         print(log_dict)
         return ""
 

@@ -169,8 +169,11 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                     if (last_track_playing) {
                         $rootScope.finishedSong = true;
                         $scope.playlist.$remove(last_track_playing).
-                            then(function (ref) {
-                                console.log($scope.playlist[0]);
+                            then(function () {
+                                if (!$scope.playlist[0].firebase_start_time) {
+                                    $scope.playlist[0].firebase_start_time = Firebase.ServerValue.TIMESTAMP;
+                                    $scope.playlist.$save(0);
+                                }
                             })
                     }
                 }

@@ -3,7 +3,7 @@
     <ul class="list-group">
         <li class="list-group-item" ng-repeat="group in current_user.groups">
             <div class="row">
-                <a ui-sref="group({id:group.id})" class="text-uppercase text-left">{{ group.name }}</a>
+                <a ui-sref="group({id:group.id})" class="text-capitalize text-left">{{ group.name }}</a>
                 <button class="btn btn-danger pull-right" type="button" ng-click="leaveGroup(group)">
                     Leave Group
                 </button>
