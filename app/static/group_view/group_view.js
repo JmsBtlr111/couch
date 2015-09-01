@@ -167,10 +167,11 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                     var last_track_playing = RdioPlayerFactory.last_track_playing;
                     // Check that the following variable exists for comparison
                     if (last_track_playing) {
-                        console.log(last_track_playing);
                         $rootScope.finishedSong = true;
-                        $scope.playlist.$remove(last_track_playing);
-                        console.log($scope.playlist[0]);
+                        $scope.playlist.$remove(last_track_playing).
+                            then(function (ref) {
+                                console.log($scope.playlist[0]);
+                            })
                     }
                 }
             });
