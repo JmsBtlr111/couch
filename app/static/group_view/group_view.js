@@ -51,7 +51,7 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
         factory.play = function(track) {
             var config = {'source': track.key};
             $timeout(function () {
-                $rootScope.tattletale.log('track_key: ' + track.key);
+                $rootScope.tattletale.log('track_id: ' + track.$id);
                 $rootScope.tattletale.log('track_duration: ' + track.duration);
                 $window.R.player.play(config);
                 $rootScope.tattletale.log('play_time: ' + (new Date).getTime());
