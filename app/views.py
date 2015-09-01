@@ -26,7 +26,6 @@ def log():
         for x in range(0, len(log_dict)):
             log_statement +=  ', ' + str(log_dict.get('console_logs[' + str(x) + ']'))
         print(log_statement)
-        print(log_dict)
         return ""
 
 
