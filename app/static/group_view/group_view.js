@@ -51,8 +51,7 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
         factory.play = function(track) {
             var config = {'source': track.key};
             $timeout(function () {
-                $rootScope.tattletale.log('track_id: ' + track.$id);
-                $rootScope.tattletale.log('track_duration: ' + track.duration);
+                $rootScope.tattletale.log('track_id: ' + track.$id + ', track_duration: ' + track.duration);
                 $window.R.player.play(config);
                 $rootScope.tattletale.log('play_time: ' + (new Date).getTime());
                 if($rootScope.finishedSong) {
@@ -62,7 +61,6 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                 }
                 factory.last_track_playing = track;
                 $rootScope.finishedSong = false;
-                $rootScope.tattletale.log('track_change_buffer_size: ' + TRACK_CHANGE_BUFFER);
             }, TRACK_CHANGE_BUFFER);
         };
 
@@ -146,7 +144,7 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                 var next_track = null;
                 if (playlist_state.event == 'child_added'){
                     if (!playlist_state.prevChild) {
-                        console.log('track added, first_element in playlist');
+                        console.log(playlist_state);
                         next_track = $scope.playlist.$getRecord(playlist_state.key);
                         RdioPlayerFactory.play(next_track);
                     } else {
@@ -154,11 +152,15 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                     }
                 } else if (playlist_state.event == 'child_removed') {
                     console.log(playlist_state);
-                    console.log('track removed, first_element in playlist');
                     if ($scope.playlist.length) {
+                        console.log(RdioPlayerFactory.last_track_playing);
                         var next_track_key = $scope.playlist.$keyAt(0);
                         next_track = $scope.playlist.$getRecord(next_track_key);
+                        console.log(next_track);
+                        var play_begins = (new Date).getTime();
                         RdioPlayerFactory.play(next_track);
+                        var play_ends = (new Date).getTime();
+                        console.log('play took ' + play_ends.toString() - play_begins.toString() + 'ms to complete');
                     } else {
                         RdioPlayerFactory.last_track_playing = null;
                     }
