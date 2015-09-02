@@ -146,6 +146,7 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                     if (!playlist_state.prevChild) {
                         var first_track = $scope.playlist.$getRecord(playlist_state.key);
                         $rootScope.tattletale.log('first_in_playlist: True');
+                        $rootScope.new_track_time = (new Date).getTime();
                         RdioPlayerFactory.play(first_track);
                     } else {
                         console.log('track added');
