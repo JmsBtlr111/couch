@@ -142,7 +142,7 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
 
             $scope.playlist.$watch(function (playlist_state) {
                 console.log(playlist_state);
-                if (playlist_state.event == 'child_added'){
+                if (playlist_state.event.toString() == 'child_added'){
                     if (!playlist_state.prevChild) {
                         var first_track = $scope.playlist.$getRecord(playlist_state.key);
                         $rootScope.tattletale.log('first_in_playlist: True');
@@ -150,7 +150,7 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                     } else {
                         console.log('track added');
                     }
-                } else if (playlist_state.event == 'child_removed') {
+                } else if (playlist_state.event.toString() === 'child_removed') {
                     if ($scope.playlist.length) {
                         var next_track_key = $scope.playlist.$keyAt(0);
                         var next_track = $scope.playlist.$getRecord(next_track_key);
@@ -163,6 +163,7 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
             });
 
             $window.R.player.on('change:playingTrack', function (playing_track) {
+                console.log(playing_track);
                 if (!playing_track) {
                     var last_track_playing = RdioPlayerFactory.last_track_playing;
                     // Check that the following variable exists for comparison
@@ -170,6 +171,18 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                         $rootScope.finishedSong = true;
                         $scope.playlist.$remove(last_track_playing);
                     }
+                }
+            });
+
+            $window.R.player.on('change:playState', function (play_state) {
+                if (play_state === $window.R.player.PLAYSTATE_PAUSED) {
+                    console.log('PAUSED');
+                } else if (play_state === $window.R.player.PLAYSTATE_PLAYING) {
+                    console.log('PLAYING');
+                } else if (play_state === $window.R.player.PLAYSTATE_STOPPED) {
+                    console.log('STOPPED');
+                } else {
+                    console.log('i dunno');
                 }
             });
 
