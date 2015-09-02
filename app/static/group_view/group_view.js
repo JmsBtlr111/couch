@@ -51,15 +51,15 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
         factory.play = function(track) {
             var config = {'source': track.key};
             $timeout(function () {
-                $rootScope.tattletale.log('track_id: ' + track.$id + ', track_duration: ' + track.duration);
-                $window.R.player.play(config);
-                $rootScope.tattletale.log('play_time: ' + (new Date).getTime());
                 if($rootScope.finishedSong) {
                     $rootScope.tattletale.log('previous_track_finished: True');
                 } else if(factory.last_track_playing) {
                     $rootScope.tattletale.log('previous_track_finished: False');
                 }
+                $rootScope.tattletale.log('track_id: ' + track.$id + ', track_duration: ' + track.duration);
                 factory.last_track_playing = track;
+                $window.R.player.play(config);
+                $rootScope.tattletale.log('play_time: ' + (new Date).getTime());
                 $rootScope.finishedSong = false;
             }, TRACK_CHANGE_BUFFER);
         };
