@@ -155,6 +155,7 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                         var next_track_key = $scope.playlist.$keyAt(0);
                         var next_track = $scope.playlist.$getRecord(next_track_key);
                         $rootScope.tattletale.log('first_in_playlist: False');
+                        $rootScope.new_track_time = (new Date).getTime();
                         RdioPlayerFactory.play(next_track);
                     } else {
                         RdioPlayerFactory.last_track_playing = null;
@@ -167,22 +168,10 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                 if (!playing_track) {
                     var last_track_playing = RdioPlayerFactory.last_track_playing;
                     // Check that the following variable exists for comparison
-                    if (last_track_playing) {
+                    if (last_track_playing && ((new Date).getTime() - $rootScope.new_track_time > 8000)) {
                         $rootScope.finishedSong = true;
                         $scope.playlist.$remove(last_track_playing);
                     }
-                }
-            });
-
-            $window.R.player.on('change:playState', function (play_state) {
-                if (play_state === $window.R.player.PLAYSTATE_PAUSED) {
-                    console.log('PAUSED');
-                } else if (play_state === $window.R.player.PLAYSTATE_PLAYING) {
-                    console.log('PLAYING');
-                } else if (play_state === $window.R.player.PLAYSTATE_STOPPED) {
-                    console.log('STOPPED');
-                } else {
-                    console.log('i dunno');
                 }
             });
 
