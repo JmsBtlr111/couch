@@ -165,14 +165,15 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
             });
 
             $window.R.player.on('change:playingTrack', function (playing_track) {
-                console.log(playing_track);
                 if (!playing_track) {
-                    var last_track_playing = RdioPlayerFactory.last_track_playing;
                     $rootScope.finishedSong = true;
+                    var last_track_playing = RdioPlayerFactory.last_track_playing;
                     // Check that the following variable exists for comparison
                     if (last_track_playing && ((new Date).getTime() - $rootScope.new_track_time > 8000)) {
                         $scope.playlist.$remove(last_track_playing);
                     }
+                } else {
+                    $rootScope.finishedSong = false;
                 }
             });
 
