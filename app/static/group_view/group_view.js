@@ -174,18 +174,6 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
                 }
             });
 
-            $window.R.player.on('change:playState', function (play_state) {
-                if (play_state === $window.R.player.PLAYSTATE_PAUSED) {
-                    console.log('PAUSED');
-                } else if (play_state === $window.R.player.PLAYSTATE_PLAYING) {
-                    console.log('PLAYING');
-                } else if (play_state === $window.R.player.PLAYSTATE_STOPPED) {
-                    console.log('STOPPED');
-                } else {
-                    console.log('i dunno');
-                }
-            });
-
             $scope.search_results = {};
 
             $scope.search = function (search_text) {
