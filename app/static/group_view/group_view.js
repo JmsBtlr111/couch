@@ -44,7 +44,7 @@ angular.module('app.group_view', ['ui.router', 'firebase']).
     }).
     factory('RdioPlayerFactory', function ($window, $timeout, $rootScope) {
         var factory = {};
-        var TRACK_CHANGE_BUFFER = 400;
+        var TRACK_CHANGE_BUFFER = 500;
 
         factory.last_track_playing = null;
 
