@@ -1,0 +1,19 @@
+<div class="container">
+    <h3>{{ current_user.first_name }}'s Groups</h3>
+    <ul class="list-group">
+        <li class="list-group-item" ng-repeat="group in current_user.groups">
+            <div class="row">
+                <a ui-sref="group({id:group.id})" class="text-capitalize text-left">{{ group.name }}</a>
+                <button class="btn btn-danger pull-right" type="button" ng-click="leaveGroup(group)">
+                    Leave Group
+                </button>
+            </div>
+        </li>
+    </ul>
+    <div class="input-group">
+        <input ng-model="new_group_name" type="text" class="form-control" placeholder="Enter group name">
+        <span class="input-group-btn">
+            <button class="btn btn-success" ng-click="createNewGroup(new_group_name)">Create Group</button>
+        </span>
+    </div>
+</div>

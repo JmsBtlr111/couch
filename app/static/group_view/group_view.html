@@ -1,0 +1,100 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2 hidden-sm hidden-xs">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        Currently Listening
+                    </h3>
+                </div>
+                <ul class="list-group">
+                    <li class="list-group-item" ng-repeat="listener in listeners">
+                        {{ listener.first_name }} {{ listener.last_name }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="input-group">
+                    <input type="text"
+                           class="form-control"
+                           ng-model="search_text"
+                           placeholder="Search for songs, artists or albums"
+                           ng-keypress="search(search_text)">
+                <span class="input-group-btn">
+                    <button class="btn btn-success" type="button" ng-click="search(search_text)">
+                        Go!
+                    </button>
+                </span>
+                </div>
+                <br>
+                <div class="panel panel-default" ng-show="search_results.length">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            Tracks
+                        </h3>
+                    </div>
+                    <ul class="list-group">
+                        <li class="list-group-item" ng-repeat="track in search_results | limitTo:5">
+                            <div class="media">
+                                <div class="media-left">
+                                    <img class="media-object" ng-src="{{ track.icon }}" width="64">
+                                </div>
+                                <div class="media-body media-middle">
+                                    <h4 class="media-heading">
+                                        {{ track.name }}
+                                    </h4>
+                                    <p>
+                                        {{ track.artist }}
+                                    </p>
+                                </div>
+                                <div class="media-right">
+                                    <button class="btn btn-success" type="button" ng-click="addToPlaylist(track)">
+                                        Add to playlist
+                                    </button>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        Playlist
+                    </h3>
+                </div>
+                <ul class="list-group">
+                    <li class="list-group-item list-group-item-info" ng-if="playlist.length === 0">
+                        <div>
+                            The playlist is currently empty! Search and add some songs!
+                        </div>
+                    </li>
+                    <li class="list-group-item" ng-show="playlist.length" ng-repeat="track in playlist">
+                        <div class="media">
+                            <div class="media-left">
+                                <img class="media-object" ng-src="{{ track.icon }}" width="64">
+                            </div>
+                            <div class="media-body media-middle">
+                                <h4 class="media-heading">
+                                    {{ track.name }}
+                                </h4>
+                                <p>
+                                    {{ track.artist }}
+                                </p>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="media-right" id="log_button">
+            <button class="btn btn-success" type="button" ng-click="sendLogs()">
+                Send Logs
+            </button>
+        </div>
+    </div>
+</div>

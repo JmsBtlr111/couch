@@ -21,7 +21,6 @@ def create_model_from_args(args, model_type):
         model = User(id=args['id'],
                      first_name=args['first_name'],
                      last_name=args['last_name'],
-                     image_url=args['image_url'],
                      user_url=args['user_url'])
     elif model_type == 'group':
         model = Group(name=args['name'])
@@ -73,6 +72,15 @@ def add_group_to_db(group):
 def add_user_to_group(user, group):
     if user not in group.users:
         group.users.append(user)
+        db.session.commit()
+        return user
+    else:
+        return None
+
+
+def remove_user_from_group(user, group):
+    if user in group.users:
+        group.users.remove(user)
         db.session.commit()
         return user
     else:
