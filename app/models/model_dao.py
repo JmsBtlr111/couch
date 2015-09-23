@@ -21,7 +21,6 @@ def create_model_from_args(args, model_type):
         model = User(id=args['id'],
                      first_name=args['first_name'],
                      last_name=args['last_name'],
-                     image_url=args['image_url'],
                      user_url=args['user_url'])
     elif model_type == 'group':
         model = Group(name=args['name'])

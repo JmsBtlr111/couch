@@ -4,6 +4,7 @@ from flask_restful import Resource, reqparse
 
 from app import app
 from models import model_dao
+from flask import request
 
 
 @app.route('/')
@@ -12,6 +13,20 @@ from models import model_dao
 def login():
     """Displays the login page"""
     return app.send_static_file('index.html')
+
+
+@app.route('/log', methods=['POST', 'OPTIONS'])
+def log():
+    if request.method == 'OPTIONS':
+        return ""
+    elif request.method == 'POST':
+        log_dict = request.form.copy().to_dict()
+        log_statement = ''
+        log_statement += str('ip_address: ' + request.remote_addr)
+        for x in range(0, len(log_dict)):
+            log_statement +=  ', ' + str(log_dict.get('console_logs[' + str(x) + ']'))
+        print(log_statement)
+        return ""
 
 
 class UserView(Resource):
@@ -29,7 +44,6 @@ class UserListView(Resource):
         self.parser.add_argument('id', type=str, required=True, help='id must be specified')
         self.parser.add_argument('first_name', type=str, required=True, help='first name must be specified')
         self.parser.add_argument('last_name', type=str, required=True, help='last name must be specified')
-        self.parser.add_argument('image_url', type=str, required=True, help='image URL must be specified')
         self.parser.add_argument('user_url', type=str, required=True, help='user URL must be specified')
 
     def get(self):

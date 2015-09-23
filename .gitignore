@@ -111,7 +111,7 @@ develop-eggs/
 downloads/
 eggs/
 .eggs/
-lib/
+app/static/lib/
 lib64/
 parts/
 sdist/

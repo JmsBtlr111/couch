@@ -1,14 +1,16 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="application">
+<html lang="en" ng-app="app">
 <head>
     <meta charset="UTF-8">
     <title>Couch</title>
+    <link rel="shortcut icon" href="img/favicon.ico" />
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="group_view/group_view.css">
     <script src="https://www.rdio.com/api/api.js?client_id=zknbfqygnnc6pbt7mn5tsd2vaq"></script>
     <base href="/">
 </head>
 <body>
-<header ng-controller="HeaderCtrl">
+<header>
     <nav class="navbar navbar-default">
         <div class="container">
             <a class="navbar-brand" href="#">
@@ -20,25 +22,18 @@
 
 <div ui-view class="container-fluid"></div>
 
-<!-- JQuery -->
-<script src="bower_components/jquery/dist/jquery.js"></script>
-
-<!-- Bootstrap -->
+<script src="bower_components/jquery/jquery.js"></script>
 <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
-
-<!-- AngularJS -->
 <script src="bower_components/angular/angular.js"></script>
-
-<!-- Angular UI-Router -->
 <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
-
-<!-- Firebase -->
-<script src="bower_components/firebase/firebase.js"></script>
-
-<!-- AngularFire -->
+<script src="bower_components/firebase/firebase-debug.js"></script>
 <script src="bower_components/angularfire/dist/angularfire.js"></script>
-
-<!-- Couch -->
+<script src="js/tattletale.js"></script>
+<!--<script src="bower_components/stacktrace-js/dist/stacktrace.js"></script>
+<script src="bower_components/app-logger-angular/js/logging.js"></script>-->
 <script src="app.js"></script>
+<script src="home_view/home_view.js"></script>
+<script src="group_view/group_view.js"></script>
+<script src="login_view/login_view.js"></script>
 </body>
 </html>

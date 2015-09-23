@@ -5,6 +5,7 @@ from flask_restful import Api
 from flask.ext.sqlalchemy import SQLAlchemy
 from dictalchemy import make_class_dictable
 
+
 app = Flask(__name__, static_url_path='')
 app.config.from_object('config')
 
