@@ -17,7 +17,10 @@ src_files:
   - app/static/bower_components/angularfire/dist/*.js
   - app/static/bower_components/bootstrap/dist/js/*.js
   - app/static/bower_components/firebase/*.js
-  - app/static/bower_components/jquery/dist/*.js
+  - app/static/bower_components/jquery/*.js
+  - app/static/group_view/*.js
+  - app/static/home_view/*.js
+  - app/static/login_view/*.js
   - app/static/*.js
 # stylesheets
 #

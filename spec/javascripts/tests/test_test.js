@@ -24,22 +24,25 @@
 //});
 
 describe('LoginCtrl', function () {
-    beforeEach(module('application'));
+    beforeEach(module('app'));
 
     var $httpBackend, $scope, $window, $state, $rootScope, createController, authRequestHandler;
 
     beforeEach(inject(function ($injector) {
         $httpBackend = $injector.get('$httpBackend');
 
-        authRequestHandler = $httpBackend.when('POST', '/api/user')
+        //authRequestHandler = $httpBackend.when('POST', '/api/user')
+        //    .respond({userId: 'userX'}, {'A-Token': 'xxx'});
+
+        authRequestHandler = $httpBackend.when('GET', 'login_view/login_view.html')
             .respond({userId: 'userX'}, {'A-Token': 'xxx'});
 
-        $scope = _$scope_;
-        $state = _$state_;
-        $window = _$window_;
-        $rootScope = _$rootScope_;
+        $scope = $injector.get('$scope');
+        $state = $injector.get('$state');
+        $window = $injector.get('$window');
+        $rootScope = $injector.get('$rootScope');
 
-        var $controller = _$controller_;
+        var $controller = $injector.get('$controller');
 
         createController = function () {
             return $controller('LoginCtrl', {
@@ -53,46 +56,39 @@ describe('LoginCtrl', function () {
     }));
 
     it('Login test', function () {
-        var $scope = {};
-        $httpBackend.expectPOST('/api/user');
+        $httpBackend.expectGET('login_view/login_view.html');
         var controller = createController;
-        //$window.R.currentUser = {
-        //    'key': 'key_val',
-        //    'firstName': 'firstName_val',
-        //    'lastName': 'lastName_val',
-        //    'icon': 'icon_val',
-        //    'url': 'url_val'
-        //};
-        $scope.login();
+        //controller.$scope.login
+        console.log(createController());
         $httpBackend.flush()
     })
 });
 
 
-describe('HomeCtrl', function () {
-    beforeEach(module('application'));
-
-    var $httpBackend, $scope, $window, $rootScope, createController;
-
-    beforeEach(inject(function ($injector) {
-        $httpBackend = $injector.get('$httpBackend');
-
-        authRequestHandler = $httpBackend.when('GET', '/api/user')
-            .respond({userId: 'userX'}, {'A-Token': 'xxx'});
-
-        $scope = _$scope_;
-        $window = _$window_;
-        $rootScope = _$rootScope_;
-
-        var $controller = _$controller_;
-
-        createController = function () {
-            return $controller('HomeCtrl', {
-                '$scope': $scope,
-                '$window': $window,
-                '$http': $httpBackend,
-                '$rootScope': $rootScope
-            });
-        };
-    }));
-});
+//describe('HomeCtrl', function () {
+//    beforeEach(module('application'));
+//
+//    var $httpBackend, $scope, $window, $rootScope, createController;
+//
+//    beforeEach(inject(function ($injector) {
+//        $httpBackend = $injector.get('$httpBackend');
+//
+//        authRequestHandler = $httpBackend.when('GET', '/api/user')
+//            .respond({userId: 'userX'}, {'A-Token': 'xxx'});
+//
+//        $scope = _$scope_;
+//        $window = _$window_;
+//        $rootScope = _$rootScope_;
+//
+//        var $controller = _$controller_;
+//
+//        createController = function () {
+//            return $controller('HomeCtrl', {
+//                '$scope': $scope,
+//                '$window': $window,
+//                '$http': $httpBackend,
+//                '$rootScope': $rootScope
+//            });
+//        };
+//    }));
+//});
