@@ -42,6 +42,8 @@ describe('LoginCtrl', function () {
         $window = $injector.get('$window');
         $rootScope = $injector.get('$rootScope');
 
+        console.log(module)
+
         var $controller = $injector.get('$controller');
 
         createController = function () {

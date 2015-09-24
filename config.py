@@ -2,7 +2,8 @@
 """Contains the configuration variables for the Couch app"""
 import os
 
-SQLALCHEMY_DATABASE_URI = 'postgres://nsfnaxwwqkarho:clVxOarjlM2M9009xKq6DRVwBH@ec2-50-16-229-91.compute-1.amazonaws.com:5432/dal2lb7ocml3g3'
+basedir = os.path.abspath(os.path.dirname(__file__))
 
+SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
 SECRET_KEY = 'development'
 DEBUG = True

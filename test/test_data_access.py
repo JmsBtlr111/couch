@@ -21,37 +21,51 @@ class test_data_access(TestCase):
 
     # Test adding a user to the database is done correctly
     def test_add_and_get_user(self):
-        model_dao.add_user(User(id="mock_id",
+        model_dao.add_user_to_db(User(id="mock_id",
                                 first_name="Hugo",
                                 last_name="Batman",
-                                image_url="mock_url",
                                 user_url="mock_url"))
         assert model_dao.get_user("mock_id") is not None
 
     # Test the DAO's get_user_first_name can correctly retrieve a user's first name
     def test_get_user_first_name(self):
-        model_dao.add_user(User(id="james'_id",
+        model_dao.add_user_to_db(User(id="james'_id",
                                 first_name="James",
                                 last_name="Butler",
-                                image_url="mock_url",
                                 user_url="mock_url"))
-        assert model_dao.get_user_first_name("james'_id") == "James"
+        assert model_dao.get_user("james'_id").first_name == "James"
 
-    # Test that users can add groups and vice-versa
-    def test_get_users_groups(self):
-        user = User(id="mock_id",
-                    first_name="Hugo",
-                    last_name="Batman",
-                    image_url="mock_url",
-                    user_url="mock_url")
-        group = Group(id=1, name="group_name")
-        model_dao.add_user(user)
-        model_dao.add_group(group)
-        model_dao.add_user_to_group(user, group)
-        groups = model_dao.get_groups_by_user_id("mock_id")
-        assert groups[0].name == "group_name"
+    # Test the DAO's get_user_first_name can correctly retrieve a user's first name
+    def test_get_user_last_name(self):
+        model_dao.add_user_to_db(User(id="hugo's_id",
+                                first_name="Hugo",
+                                last_name="Bateman",
+                                user_url="url_123"))
+        assert model_dao.get_user("hugo's_id").last_name == "Bateman"
+
+
+    # Test the DAO's get_user_first_name can correctly retrieve a user's first name
+    def test_get_user_url(self):
+        model_dao.add_user_to_db(User(id="james'_id",
+                                first_name="James",
+                                last_name="Butler",
+                                user_url="mock_url"))
+        assert model_dao.get_user("james'_id").user_url == "mock_url"
+
+    # # Test that users can add groups and vice-versa
+    # def test_get_users_groups(self):
+    #     user = User(id="mock_id",
+    #                 first_name="Hugo",
+    #                 last_name="Batman",
+    #                 user_url="mock_url")
+    #     group = Group(id=1, name="group_name")
+    #     model_dao.add_user_to_db(user)
+    #     model_dao.add_group_to_db(group)
+    #     model_dao.add_user_to_group(user, group)
+    #     groups = model_dao.get_groups_by_user_id("mock_id")
+    #     assert groups[0].name == "group_name"
 
     # Test that a group can be correctly added and retrieved
     def test_add_and_get_group(self):
-        model_dao.add_group(Group(id=1, name="group_name"))
+        model_dao.add_group_to_db(Group(id=1, name="group_name"))
         assert model_dao.get_group(1) is not None
