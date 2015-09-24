@@ -26,7 +26,7 @@
 describe('LoginCtrl', function () {
     beforeEach(module('app'));
 
-    var $httpBackend, $scope, $window, $state, $rootScope, createController, authRequestHandler;
+    var $httpBackend, $window, $state, $rootScope, $http, createController, authRequestHandler;
 
     beforeEach(inject(function ($injector) {
         $httpBackend = $injector.get('$httpBackend');
@@ -34,34 +34,24 @@ describe('LoginCtrl', function () {
         //authRequestHandler = $httpBackend.when('POST', '/api/user')
         //    .respond({userId: 'userX'}, {'A-Token': 'xxx'});
 
-        authRequestHandler = $httpBackend.when('GET', 'login_view/login_view.html')
-            .respond({userId: 'userX'}, {'A-Token': 'xxx'});
+        //authRequestHandler = $httpBackend.when('GET', 'login_view/login_view.html')
+        //    .respond({userId: 'userX'}, {'A-Token': 'xxx'});
 
-        $scope = $injector.get('$scope');
         $state = $injector.get('$state');
         $window = $injector.get('$window');
         $rootScope = $injector.get('$rootScope');
 
-        console.log(module)
-
         var $controller = $injector.get('$controller');
 
         createController = function () {
-            return $controller('LoginCtrl', {
-                '$scope': $scope,
-                '$window': $window,
-                '$state': $state,
-                '$http': $httpBackend,
-                '$rootScope': $rootScope
-            });
+            return $controller('LoginCtrl', { '$scope' : $rootScope });
         };
     }));
 
     it('Login test', function () {
         $httpBackend.expectGET('login_view/login_view.html');
         var controller = createController;
-        //controller.$scope.login
-        console.log(createController());
+        console.log(controller);
         $httpBackend.flush()
     })
 });
