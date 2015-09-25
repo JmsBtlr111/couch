@@ -4,6 +4,7 @@ This file provides access methods to couch's persistence data"""
 from app import db
 from user import User
 from group import Group
+from group import group_member_table
 
 # Utility database methods
 def create_db():

@@ -26,7 +26,7 @@
 describe('LoginCtrl', function () {
     beforeEach(module('app'));
 
-    var $httpBackend, $window, $state, $rootScope, $http, createController, authRequestHandler;
+    var $httpBackend, $window, $state, $rootScope, $scope, $http, createController, authRequestHandler;
 
     beforeEach(inject(function ($injector) {
         $httpBackend = $injector.get('$httpBackend');
@@ -37,21 +37,30 @@ describe('LoginCtrl', function () {
         //authRequestHandler = $httpBackend.when('GET', 'login_view/login_view.html')
         //    .respond({userId: 'userX'}, {'A-Token': 'xxx'});
 
+        authRequestHandler = $httpBackend.when('GET', 'login_view/login_view.html')
+            .respond({userId: 'userX'}, {'A-Token': 'xxx'});
+
         $state = $injector.get('$state');
         $window = $injector.get('$window');
         $rootScope = $injector.get('$rootScope');
+        $scope = $rootScope.$new();
 
         var $controller = $injector.get('$controller');
 
         createController = function () {
-            return $controller('LoginCtrl', { '$scope' : $rootScope });
+            return $controller('LoginCtrl', { '$scope' : $scope, '$rootScope' : $rootScope });
         };
+
+        spyOn($window.R, 'authenticate').andReturn(true);
+
+        $window.R.currentUser['attributes'] = {'key':1, 'firstName':'james', 'lastName':'butler', 'url':'www.james.com'};
     }));
 
     it('Login test', function () {
         $httpBackend.expectGET('login_view/login_view.html');
         var controller = createController;
         console.log(controller);
+        controller.$scope.login();
         $httpBackend.flush()
     })
 });
