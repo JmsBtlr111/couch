@@ -32,6 +32,8 @@ class test_data_access(TestCase):
         assert model_dao.get_user("mock_id").user_url == "mock_url"
         model_dao.destroy_db()
 
+
+    # Test case where all users are retrieved at once
     def test_get_all_users(self):
         model_dao.add_user_to_db(User(id="mock_id_1",
                                       first_name="f_n_1",
@@ -58,6 +60,7 @@ class test_data_access(TestCase):
         assert model_dao.get_group(1) is not None
         model_dao.destroy_db()
 
+    # Test case where all groups are retrieved at once
     def test_get_all_groups(self):
         model_dao.add_group_to_db(Group(id=1, name="group_1"))
         model_dao.add_group_to_db(Group(id=2, name="group_2"))
@@ -69,6 +72,7 @@ class test_data_access(TestCase):
         assert groups[2].name == "group_3"
         model_dao.destroy_db()
 
+    # Test case where users are added to a group
     def test_add_and_get_groups_users(self):
         model_dao.add_user_to_db(User(id="mock_id_1",
                                       first_name="f_n_1",
@@ -93,6 +97,7 @@ class test_data_access(TestCase):
         assert users[2].id == "mock_id_3"
         model_dao.destroy_db()
 
+    # Test case where user is removed twice
     def test_add_user_to_group_twice(self):
         model_dao.add_user_to_db(User(id="mock_id_1",
                                       first_name="f_n_1",
@@ -105,6 +110,7 @@ class test_data_access(TestCase):
         assert (user_added_to_group is None)
         model_dao.destroy_db()
 
+    # Test case where a user is removed from a group
     def test_remove_user_from_group(self):
         model_dao.add_user_to_db(User(id="mock_id_1",
                                       first_name="f_n_1",
@@ -117,6 +123,7 @@ class test_data_access(TestCase):
         assert not isinstance(group.users, list)
         model_dao.destroy_db()
 
+    # Test the case when a user is removed from a group they do not belong to
     def test_remove_user_from_group_its_not_part_of(self):
         model_dao.add_group_to_db(Group(id=1, name="group_1"))
         test_user = User(id="mock_id_1",

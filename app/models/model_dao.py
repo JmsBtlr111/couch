@@ -10,12 +10,12 @@ from group import group_member_table
 def create_db():
     db.create_all()
 
-
+# Method for destroying the current database
 def destroy_db():
     db.session.remove()
     db.drop_all()
 
-
+# Method for creating a model from a set of arguments
 def create_model_from_args(args, model_type):
     model = None
     if model_type == 'user':
@@ -28,6 +28,7 @@ def create_model_from_args(args, model_type):
     return model
 
 
+# Method for adding a model to the database
 def _add_model_to_db(model):
     db.session.add(model)
     db.session.commit()
@@ -40,11 +41,13 @@ def get_user(id):
     return user
 
 
+# Method for getting all users from the database
 def get_all_users():
     users = User.query.all()
     return users
 
 
+# Method for adding a user to the database
 def add_user_to_db(user):
     if get_user(user.id):
         return None
@@ -58,11 +61,13 @@ def get_group(group_id):
     return group
 
 
+# Method for getting all groups from the database
 def get_all_groups():
     groups = Group.query.all()
     return groups
 
 
+# Method for adding a group to the database
 def add_group_to_db(group):
     if get_group(group.id):
         return None
@@ -70,6 +75,7 @@ def add_group_to_db(group):
         return _add_model_to_db(group)
 
 
+# method for adding a user to a group
 def add_user_to_group(user, group):
     if user not in group.users:
         group.users.append(user)
@@ -79,6 +85,7 @@ def add_user_to_group(user, group):
         return None
 
 
+# Method for removing a user from a group
 def remove_user_from_group(user, group):
     if user in group.users:
         group.users.remove(user)

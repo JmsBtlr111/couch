@@ -6,7 +6,7 @@ from app import app
 from models import model_dao
 from flask import request
 
-
+# This is the root url for the application. It will cause the client-side application to be sent.
 @app.route('/')
 @app.route('/index')
 @app.route('/login')
@@ -14,7 +14,7 @@ def login():
     """Displays the login page"""
     return app.send_static_file('index.html')
 
-
+# This endpoint has been used for logging when performing unit testing
 @app.route('/log', methods=['POST', 'OPTIONS'])
 def log():
     if request.method == 'OPTIONS':
@@ -27,6 +27,7 @@ def log():
             log_statement +=  ', ' + str(log_dict.get('console_logs[' + str(x) + ']'))
         print(log_statement)
         return ""
+
 
 
 class UserView(Resource):
