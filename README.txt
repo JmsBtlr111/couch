@@ -55,4 +55,4 @@ The  ‘couch/test’ directory has been used for the files associated with the 
 method throughout development
 
 The ‘couch/spec’ folder is where client-side tests have been done. The jasmine.yml file is used to configure the
-Jasmine instance used for testing and the test.js file contains the unit tests themselves.
+Jasmine instance used for testing and a javascript file for each controller that has been tested
