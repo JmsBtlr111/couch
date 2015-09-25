@@ -1,12 +1,13 @@
 'use strict';
 
-angular.module('app', ['ui.router', 'app.home_view', 'app.group_view', 'app.login_view']).
-    config(['$urlRouterProvider',
+angular
+    .module('app', ['ui.router', 'app.home_view', 'app.group_view', 'app.login_view'])
+    .config(['$urlRouterProvider',
         function ($urlRouterProvider) {
             $urlRouterProvider
                 .otherwise('/');
-        }]).
-    run(['$rootScope', '$state', '$window', '$http',
+        }])
+    .run(['$rootScope', '$state', '$window', '$http',
         function ($rootScope, $state, $window, $http) {
             $rootScope.$on('$stateChangeStart', function (event, to, toParams, from, fromParams) {
                 var require_login = to.data.require_login;

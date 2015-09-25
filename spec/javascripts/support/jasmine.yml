@@ -18,7 +18,7 @@ src_files:
   - app/static/bower_components/angular-ui-router/release/angular-ui-router.js
   - app/static/bower_components/firebase/firebase-debug.js
   - app/static/bower_components/angularfire/dist/angularfire.js
-  - app/static/js/tattletale.js
+  - app/static/common/js/tattletale.js
   - app/static/app.js
   - app/static/group_view/group_view.js
   - app/static/home_view/home_view.js
