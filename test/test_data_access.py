@@ -125,3 +125,4 @@ class test_data_access(TestCase):
                          user_url="url_1")
         return_value = model_dao.remove_user_from_group(test_user, model_dao.get_group(1))
         assert return_value is None
+        model_dao.destroy_db()
