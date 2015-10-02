@@ -27,7 +27,7 @@ angular
  * Allows user to create new groups.
  * Allows user to leave groups.
  */
-    .controller('HomeCtrl', ['$scope', '$window', '$http', '$rootScope', function ($scope, $window, $http, $rootScope) {
+    .controller('HomeCtrl', ['$scope', '$http', '$rootScope', function ($scope, $http, $rootScope) {
         // GET current user's groups from Couch API
         $http.get('/api/user/' + $rootScope.current_user.id)
             .success(function (data) {

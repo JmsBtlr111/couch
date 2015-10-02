@@ -15,15 +15,15 @@ src_files:
   - app/static/bower_components/jquery/jquery.js
   - app/static/bower_components/angularfire/dist/js/bootstrap.js
   - app/static/bower_components/angular/angular.js
+  - app/static/bower_components/angular-mocks/angular-mocks.js
   - app/static/bower_components/angular-ui-router/release/angular-ui-router.js
   - app/static/bower_components/firebase/firebase-debug.js
   - app/static/bower_components/angularfire/dist/angularfire.js
-  - app/static/common/js/tattle
-  - app/static/app.js/app.js
-  - app/static/grougroup_viewup_view.js
-  - app/static/homhome_viewme_view.js
-  - app/static/logilogin_viewin_view.js
-  - app/static/bower_components/angularangular-mocksr-mocks.js
+  - app/static/common/js/tattletale.js
+  - app/static/app.js
+  - app/static/group_view/group_view.js
+  - app/static/home_view/home_view.js
+  - app/static/login_view/login_view.js
 # stylesheets
 #
 # Return an array of stylesheet filepaths relative to src_dir to include before jasmine specs.
