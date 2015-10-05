@@ -192,6 +192,7 @@ angular
                     if (!playlist_state.prevChild) {
                         var first_track = $scope.playlist.$getRecord(playlist_state.key);
                         $rootScope.tattletale.log('first_in_playlist: True');
+                        $rootScope.new_track_time = (new Date).getTime();
                         RdioPlayerFactory.play(first_track);
                     } else {
                         console.log('track added');
@@ -204,6 +205,7 @@ angular
                         var next_track_key = $scope.playlist.$keyAt(0);
                         var next_track = $scope.playlist.$getRecord(next_track_key);
                         $rootScope.tattletale.log('first_in_playlist: False');
+                        $rootScope.new_track_time = (new Date).getTime();
                         RdioPlayerFactory.play(next_track);
                     } else {
                         RdioPlayerFactory.last_track_playing = null;
@@ -216,6 +218,7 @@ angular
                 console.log(playing_track);
                 // When a track finishes, remove the track from the playlist
                 if (!playing_track) {
+                    $rootScope.finishedSong = true;
                     var last_track_playing = RdioPlayerFactory.last_track_playing;
                     // Check that the following variable exists before comparison
                     if (last_track_playing) {
