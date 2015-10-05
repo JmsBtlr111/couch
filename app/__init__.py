@@ -20,4 +20,3 @@ api.add_resource(views.UserListView, '/api/user')
 api.add_resource(views.GroupView, '/api/group/<int:group_id>')
 api.add_resource(views.GroupListView, '/api/group')
 
-db.create_all()
